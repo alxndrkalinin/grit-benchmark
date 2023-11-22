@@ -49,9 +49,7 @@ def merge_metadata(cell_line, level3_profile):
         right_on="Metadata_well_position",
     )
     # # reorder columns for metadata to be in front
-    meta_df = meta_df[
-        sorted(meta_df, key=lambda x: x not in meta_df.filter(like="Metadata").columns)
-    ]
+    meta_df = meta_df[sorted(meta_df, key=lambda x: x not in meta_df.filter(like="Metadata").columns)]
 
     return meta_df
 

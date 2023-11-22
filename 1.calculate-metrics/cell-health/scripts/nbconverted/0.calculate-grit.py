@@ -33,9 +33,7 @@ from cytominer_eval.operations.util import assign_replicates
 # Load Cell Health data
 commit = "07e4b40c39dd27084be36fbef4d64c5654b2960f"
 base_url = f"https://github.com/broadinstitute/cell-health/raw/{commit}"
-url = (
-    f"{base_url}/1.generate-profiles/data/processed/cell_health_profiles_merged.tsv.gz"
-)
+url = f"{base_url}/1.generate-profiles/data/processed/cell_health_profiles_merged.tsv.gz"
 
 df = pd.read_csv(url, sep="\t")
 

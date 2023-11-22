@@ -50,18 +50,14 @@ result = mg.querymany(
     as_dataframe=True,
 )
 
-ncbi_id_df = (
-    result.drop_duplicates(subset="_id").loc[:, ["_id"]].reset_index(drop=False)
-)
+ncbi_id_df = result.drop_duplicates(subset="_id").loc[:, ["_id"]].reset_index(drop=False)
 ncbi_id_df.head(2)
 
 
 # In[5]:
 
 
-cell_health_grit_df = cell_health_grit_df.merge(
-    ncbi_id_df, left_on="group", right_on="query", how="left"
-)
+cell_health_grit_df = cell_health_grit_df.merge(ncbi_id_df, left_on="group", right_on="query", how="left")
 
 print(cell_health_grit_df.shape)
 cell_health_grit_df.head(2)
@@ -117,9 +113,7 @@ ceres_genes_df.head(3)
 
 
 # Merge the data
-ceres_df = depmap_sample_df.merge(
-    ceres_df, left_index=True, right_index=True, how="right"
-)
+ceres_df = depmap_sample_df.merge(ceres_df, left_index=True, right_index=True, how="right")
 
 print(ceres_df.shape)
 ceres_df.head(3)

@@ -102,9 +102,7 @@ clf_parameters = {
 # In[10]:
 
 
-estimator_regressor = Pipeline(
-    steps=[("regress", ElasticNet(random_state=42, max_iter=2000, tol=1e-3))]
-)
+estimator_regressor = Pipeline(steps=[("regress", ElasticNet(random_state=42, max_iter=2000, tol=1e-3))])
 
 estimator_classifier = Pipeline(
     steps=[
@@ -153,9 +151,7 @@ os.makedirs(f"{output_folder}/{method}_agg", exist_ok=True)
 
 # These are the models that cannot be fit
 not_fit_df = pd.DataFrame(cannot_fit_list, columns=["target", "y_transform", "shuffle"])
-not_fit_file = os.path.join(
-    output_folder, "{}_agg".format(method), "not_fit_models_{}.tsv".format(consensus)
-)
+not_fit_file = os.path.join(output_folder, "{}_agg".format(method), "not_fit_models_{}.tsv".format(consensus))
 
 not_fit_df.to_csv(not_fit_file, sep="\t", index=False)
 not_fit_df
@@ -180,32 +176,20 @@ full_y_df = pd.concat(all_y_label_list).reset_index(drop=True)
 results_dir = "results/{}_agg/".format(method)
 os.makedirs(results_dir, exist_ok=True)
 
-file = os.path.join(
-    results_dir, "full_cell_health_cv_results_{}.tsv.gz".format(consensus)
-)
+file = os.path.join(results_dir, "full_cell_health_cv_results_{}.tsv.gz".format(consensus))
 full_cv_df.to_csv(file, sep="\t", index=False)
 
-file = os.path.join(
-    results_dir, "full_cell_health_regression_{}.tsv.gz".format(consensus)
-)
+file = os.path.join(results_dir, "full_cell_health_regression_{}.tsv.gz".format(consensus))
 full_regression_results_df.to_csv(file, sep="\t", index=False)
 
-file = os.path.join(
-    results_dir, "full_cell_health_roc_results_{}.tsv.gz".format(consensus)
-)
+file = os.path.join(results_dir, "full_cell_health_roc_results_{}.tsv.gz".format(consensus))
 full_roc_df.to_csv(file, sep="\t", index=False)
 
-file = os.path.join(
-    results_dir, "full_cell_health_pr_results_{}.tsv.gz".format(consensus)
-)
+file = os.path.join(results_dir, "full_cell_health_pr_results_{}.tsv.gz".format(consensus))
 full_pr_df.to_csv(file, sep="\t", index=False)
 
-file = os.path.join(
-    results_dir, "full_cell_health_coefficients_{}.tsv.gz".format(consensus)
-)
+file = os.path.join(results_dir, "full_cell_health_coefficients_{}.tsv.gz".format(consensus))
 full_coef_df.to_csv(file, sep="\t", index=False)
 
-file = os.path.join(
-    results_dir, "full_cell_health_y_labels_{}.tsv.gz".format(consensus)
-)
+file = os.path.join(results_dir, "full_cell_health_y_labels_{}.tsv.gz".format(consensus))
 full_y_df.to_csv(file, sep="\t", index=False)

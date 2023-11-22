@@ -47,9 +47,7 @@ plates = [
     "SQ00014618",
 ]
 
-plate_files = {
-    plate: pathlib.Path(f"{sc_dir}/{plate}_normalized.csv.gz") for plate in plates
-}
+plate_files = {plate: pathlib.Path(f"{sc_dir}/{plate}_normalized.csv.gz") for plate in plates}
 plate_files
 
 

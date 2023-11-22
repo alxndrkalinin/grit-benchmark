@@ -30,9 +30,7 @@ def merge_metadata(cell_line, level3_profile):
         right_on="Metadata_well_position",
     )
     # # reorder columns for metadata to be in front
-    meta_df = meta_df[
-        sorted(meta_df, key=lambda x: x not in meta_df.filter(like="Metadata").columns)
-    ]
+    meta_df = meta_df[sorted(meta_df, key=lambda x: x not in meta_df.filter(like="Metadata").columns)]
 
     return meta_df
 
@@ -47,9 +45,7 @@ plate_dict = {
 ### take the same columns as original Cell Health paper did ###
 commit = "67729b2baf9830484e22087efcf41294ae8e0904"
 base_url = f"https://github.com/broadinstitute/cell-health/raw/{commit}"
-url = (
-    f"{base_url}/1.generate-profiles/data/processed/cell_health_profiles_merged.tsv.gz"
-)
+url = f"{base_url}/1.generate-profiles/data/processed/cell_health_profiles_merged.tsv.gz"
 
 df = pd.read_csv(url, sep="\t")
 print(df.shape)
@@ -105,9 +101,7 @@ for cell_line in ["ES2", "HCC44", "A549"]:
     ).assign(Metadata_agg_method="median", cell_line=cell_line)
     agg_meta_df = merge_metadata(cell_line, agg_df)
     # writing data
-    agg_meta_df.to_csv(
-        Path(results_folder + cell_line + "_median_EMPTY.tsv"), index=False, sep="\t"
-    )
+    agg_meta_df.to_csv(Path(results_folder + cell_line + "_median_EMPTY.tsv"), index=False, sep="\t")
 
     #     ###### grit-informed aggregation methods ######
     #     ### raw grit as weights ###
@@ -121,6 +115,4 @@ for cell_line in ["ES2", "HCC44", "A549"]:
     #     # writing data
     #     agg_meta_df.to_csv(Path(results_folder + cell_line + "_weighted.tsv"), index=False, sep='\t')
 
-    print(
-        f"TOTAL TIME performing aggregation for cell_line {cell_line} : {str(datetime.now()-start_agg)}"
-    )
+    print(f"TOTAL TIME performing aggregation for cell_line {cell_line} : {str(datetime.now()-start_agg)}")

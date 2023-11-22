@@ -34,9 +34,7 @@ x_median_df = pd.read_csv(
 )
 
 # the cell health labels
-y_median_df = pd.read_csv(
-    Path("{}{}_agg_cell_health_modz.tsv.gz".format(consensus_folder, method)), sep="\t"
-)
+y_median_df = pd.read_csv(Path("{}{}_agg_cell_health_modz.tsv.gz".format(consensus_folder, method)), sep="\t")
 
 
 # ### Perform the train-test split stratified by cell line

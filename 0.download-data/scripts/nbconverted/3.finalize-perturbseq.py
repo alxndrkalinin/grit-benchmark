@@ -32,9 +32,7 @@ gse_id = "GSE132080"
 perturbseq_data_dir = pathlib.Path("data/perturbseq/")
 
 output_file = pathlib.Path(f"{perturbseq_data_dir}/{gse_id}_final_analytical.tsv.gz")
-output_bulk_file = pathlib.Path(
-    f"{perturbseq_data_dir}/{gse_id}_bulk_final_analytical.tsv.gz"
-)
+output_bulk_file = pathlib.Path(f"{perturbseq_data_dir}/{gse_id}_bulk_final_analytical.tsv.gz")
 
 
 # In[3]:
@@ -54,9 +52,7 @@ gene_exp_df = (
 gene_features = gene_exp_df.columns.tolist()
 gene_features.remove("Metadata_barcode")
 
-gene_exp_df = gene_exp_df.assign(
-    Metadata_sequence=[x.split("-")[0] for x in gene_exp_df.Metadata_barcode]
-)
+gene_exp_df = gene_exp_df.assign(Metadata_sequence=[x.split("-")[0] for x in gene_exp_df.Metadata_barcode])
 gene_exp_df.columns.name = ""
 
 meta_features = ["Metadata_barcode", "Metadata_sequence"]
@@ -77,9 +73,7 @@ cell_id_df = pd.read_csv(identity_file, sep=",")
 
 cell_id_df.columns = [f"Metadata_{x}" for x in cell_id_df.columns]
 cell_id_df = cell_id_df.assign(
-    Metadata_gene_identity=[
-        str(x).split("_")[0] for x in cell_id_df.Metadata_guide_identity
-    ]
+    Metadata_gene_identity=[str(x).split("_")[0] for x in cell_id_df.Metadata_guide_identity]
 )
 
 print(cell_id_df.shape)
@@ -108,9 +102,7 @@ sc_df.head()
 
 
 # Write the file to disk
-sc_df.to_csv(
-    output_file, index=False, sep="\t", compression={"method": "gzip", "mtime": 1}
-)
+sc_df.to_csv(output_file, index=False, sep="\t", compression={"method": "gzip", "mtime": 1})
 
 
 # ## Calculate bulk perturbseq data
@@ -130,9 +122,9 @@ bulk_df = aggregate(
 bulk_df = bulk_df[~bulk_df["Metadata_guide_identity"].isnull()]
 
 # create a column for the gene
-bulk_df = bulk_df.assign(
-    Metadata_gene_identity=[x.split("_")[0] for x in bulk_df.Metadata_guide_identity]
-).query("Metadata_gene_identity != '*'")
+bulk_df = bulk_df.assign(Metadata_gene_identity=[x.split("_")[0] for x in bulk_df.Metadata_guide_identity]).query(
+    "Metadata_gene_identity != '*'"
+)
 
 bulk_df = bulk_df.reindex(
     ["Metadata_guide_identity", "Metadata_gene_identity"] + gene_features,
@@ -147,6 +139,4 @@ bulk_df.head()
 
 
 # Write the file to disk
-bulk_df.to_csv(
-    output_bulk_file, index=False, sep="\t", compression={"method": "gzip", "mtime": 1}
-)
+bulk_df.to_csv(output_bulk_file, index=False, sep="\t", compression={"method": "gzip", "mtime": 1})

@@ -38,17 +38,13 @@ def calculate_weighted_agg(
     # this performs the weighted mean calculation when grit is softmax() transformed
     def weighted_sum(groupby_df, weights="Metadata_grit"):
         groupby_df["Metadata_softmax_grit"] = softmax(groupby_df[weights])
-        weighted_product = groupby_df.loc[:, features].multiply(
-            groupby_df["Metadata_softmax_grit"], axis=0
-        )
+        weighted_product = groupby_df.loc[:, features].multiply(groupby_df["Metadata_softmax_grit"], axis=0)
         solution = weighted_product.sum(axis=0)
         return solution
 
     # this performs the weighted mean calculation when grit is either its current state or a clipped version for positive weights only (havent built in a min contribution, oops)
     def weighted_mean(groupby_df, weights="Metadata_grit"):
-        solution = np.average(
-            groupby_df.loc[:, features], axis=0, weights=groupby_df[weights]
-        )
+        solution = np.average(groupby_df.loc[:, features], axis=0, weights=groupby_df[weights])
         return solution
 
     # option to shuffle the original grit column
@@ -57,25 +53,15 @@ def calculate_weighted_agg(
 
     # option to clip the grit
     if weight == "Metadata_clipped_grit":
-        population_df["Metadata_clipped_grit"] = population_df.Metadata_grit.clip(
-            lower=lower_threshold
-        )
+        population_df["Metadata_clipped_grit"] = population_df.Metadata_grit.clip(lower=lower_threshold)
 
     # branch entered for softmax-transformed grit
     if transform == "softmax_grit":
-        res_df = (
-            population_df.groupby(columns).apply(
-                lambda x: weighted_sum(x, weights=weight)
-            )
-        ).reset_index()
+        res_df = (population_df.groupby(columns).apply(lambda x: weighted_sum(x, weights=weight))).reset_index()
 
     # branch entered for mean weighted by grit
     elif transform == "weighted_grit":
-        res_df = (
-            population_df.groupby(columns).apply(
-                lambda x: weighted_mean(x, weights=weight)
-            )
-        ).reset_index()
+        res_df = (population_df.groupby(columns).apply(lambda x: weighted_mean(x, weights=weight))).reset_index()
 
         res_df[population_df.loc[:, features].columns] = pd.DataFrame(
             np.vstack(res_df[0].values), columns=population_df.loc[:, features].columns

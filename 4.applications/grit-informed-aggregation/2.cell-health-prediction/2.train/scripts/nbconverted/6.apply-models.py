@@ -49,9 +49,7 @@ def sample_squared_error(scores, y):
     all_squared_error = {}
     for cell_health_feature in scores_values.columns:
         y_subset_df = y.loc[:, cell_health_feature].dropna().T
-        scores_subset = (
-            scores_values.loc[:, cell_health_feature].reindex(y_subset_df.index).T
-        )
+        scores_subset = scores_values.loc[:, cell_health_feature].reindex(y_subset_df.index).T
 
         squared_error = (y_subset_df - scores_subset) ** 2
         all_squared_error[cell_health_feature] = squared_error
@@ -74,9 +72,7 @@ method = "median"
 # In[5]:
 
 
-model_dict, model_coef = load_models(
-    model_dir=f"models/{method}_agg", consensus=consensus
-)
+model_dict, model_coef = load_models(model_dir=f"models/{method}_agg", consensus=consensus)
 shuffle_model_dict, shuffle_model_coef = load_models(
     model_dir=f"models/{method}_agg", shuffle=True, consensus=consensus
 )
@@ -189,15 +185,13 @@ for cell_health_feature in model_dict.keys():
 all_scores = (
     pd.concat(all_scores)
     .reset_index(drop=True)
-    .pivot_table(
-        index=["profiles", "Metadata_data_type"], columns="model", values="score"
-    )
+    .pivot_table(index=["profiles", "Metadata_data_type"], columns="model", values="score")
     .reset_index()
 )
 
-all_scores = metadata_df.merge(
-    all_scores, left_on="Metadata_profile_id", right_on="profiles"
-).drop("profiles", axis="columns")
+all_scores = metadata_df.merge(all_scores, left_on="Metadata_profile_id", right_on="profiles").drop(
+    "profiles", axis="columns"
+)
 
 all_scores.index = all_scores.Metadata_profile_id
 all_scores = all_scores.drop("Metadata_profile_id", axis="columns")
@@ -207,9 +201,7 @@ strip_text = "cell_health_{}_target_".format(consensus)
 all_scores.columns = [x.replace(strip_text, "") for x in all_scores.columns]
 
 # Output file
-file = os.path.join(
-    "results", f"{method}_agg", "all_model_predictions_{}.tsv".format(consensus)
-)
+file = os.path.join("results", f"{method}_agg", "all_model_predictions_{}.tsv".format(consensus))
 all_scores.to_csv(file, sep="\t", index=True)
 
 print(all_scores.shape)
@@ -223,24 +215,20 @@ all_scores.head(2)
 all_shuffle_scores = (
     pd.concat(all_shuffle_scores)
     .reset_index(drop=True)
-    .pivot_table(
-        index=["profiles", "Metadata_data_type"], columns="model", values="score"
-    )
+    .pivot_table(index=["profiles", "Metadata_data_type"], columns="model", values="score")
     .reset_index()
 )
 
-all_shuffle_scores = metadata_df.merge(
-    all_shuffle_scores, left_on="Metadata_profile_id", right_on="profiles"
-).drop("profiles", axis="columns")
+all_shuffle_scores = metadata_df.merge(all_shuffle_scores, left_on="Metadata_profile_id", right_on="profiles").drop(
+    "profiles", axis="columns"
+)
 
 all_shuffle_scores.index = all_shuffle_scores.Metadata_profile_id
 all_shuffle_scores = all_shuffle_scores.drop("Metadata_profile_id", axis="columns")
 
 # Remove prefix of variable columns
 strip_text = "cell_health_{}_target_".format(consensus)
-all_shuffle_scores.columns = [
-    x.replace(strip_text, "") for x in all_shuffle_scores.columns
-]
+all_shuffle_scores.columns = [x.replace(strip_text, "") for x in all_shuffle_scores.columns]
 
 # Output file
 file = os.path.join(
@@ -272,9 +260,7 @@ y_df.head(2)
 
 all_score_error = sample_squared_error(scores=all_scores, y=y_df)
 
-all_score_error = metadata_df.merge(
-    all_score_error, left_on="Metadata_profile_id", right_index=True
-)
+all_score_error = metadata_df.merge(all_score_error, left_on="Metadata_profile_id", right_index=True)
 
 # Output file
 file = os.path.join(
@@ -293,9 +279,7 @@ all_score_error.head(2)
 
 all_shuffle_score_error = sample_squared_error(scores=all_shuffle_scores, y=y_df)
 
-all_shuffle_score_error = metadata_df.merge(
-    all_shuffle_score_error, left_on="Metadata_profile_id", right_index=True
-)
+all_shuffle_score_error = metadata_df.merge(all_shuffle_score_error, left_on="Metadata_profile_id", right_index=True)
 
 # Output file
 file = os.path.join(

@@ -30,9 +30,7 @@ def merge_metadata(cell_line, level3_profile):
         right_on="Metadata_well_position",
     )
     # # reorder columns for metadata to be in front
-    meta_df = meta_df[
-        sorted(meta_df, key=lambda x: x not in meta_df.filter(like="Metadata").columns)
-    ]
+    meta_df = meta_df[sorted(meta_df, key=lambda x: x not in meta_df.filter(like="Metadata").columns)]
 
     return meta_df
 
@@ -47,9 +45,7 @@ plate_dict = {
 ### take the same columns as original Cell Health paper did ###
 commit = "67729b2baf9830484e22087efcf41294ae8e0904"
 base_url = f"https://github.com/broadinstitute/cell-health/raw/{commit}"
-url = (
-    f"{base_url}/1.generate-profiles/data/processed/cell_health_profiles_merged.tsv.gz"
-)
+url = f"{base_url}/1.generate-profiles/data/processed/cell_health_profiles_merged.tsv.gz"
 
 df = pd.read_csv(url, sep="\t")
 print(df.shape)
@@ -74,15 +70,11 @@ for cell_line in ["ES2", "HCC44", "A549"]:
         plate_name = file.split("/")[-1].split("_")[-2]
         if plate_name in plate_dict[cell_line]:
             print(f"adding scrgrit of {plate_name} to list of {cell_line}")
-            scgrit_plate = pd.read_csv(file, sep="\t").assign(
-                plate=plate_name, cell_line=cell_line
-            )
+            scgrit_plate = pd.read_csv(file, sep="\t").assign(plate=plate_name, cell_line=cell_line)
             print(scgrit_plate.shape)
             scgrit_df.append(scgrit_plate)
     scgrit_df = pd.concat(scgrit_df)
-    scgrit_df["cell_identity"] = scgrit_df.perturbation.str.split("_", expand=True)[
-        1
-    ].astype(int)
+    scgrit_df["cell_identity"] = scgrit_df.perturbation.str.split("_", expand=True)[1].astype(int)
     scgrit_df.columns = ["Metadata_" + str(col) for col in scgrit_df.columns]
     print(f"total shape of of scgrit_df for {cell_line} is: {scgrit_df.shape}")
 
@@ -122,9 +114,7 @@ for cell_line in ["ES2", "HCC44", "A549"]:
     scprofiles_df = scprofiles_df.drop(na_cols_to_drop, axis="columns")
     print(f"FINAL shape of merged data {scprofiles_df.shape}")
 
-    print(
-        f"TOTAL TIME constructing merged df for cell_line {cell_line} : {str(datetime.now()-start_merge)}"
-    )
+    print(f"TOTAL TIME constructing merged df for cell_line {cell_line} : {str(datetime.now()-start_merge)}")
 
     ###### standard median aggregation ######
     start_agg = datetime.now()
@@ -136,9 +126,7 @@ for cell_line in ["ES2", "HCC44", "A549"]:
     ).assign(Metadata_agg_method="median", cell_line=cell_line)
     agg_meta_df = merge_metadata(cell_line, agg_df)
     # writing data
-    agg_meta_df.to_csv(
-        Path(results_folder + cell_line + "_median.tsv"), index=False, sep="\t"
-    )
+    agg_meta_df.to_csv(Path(results_folder + cell_line + "_median.tsv"), index=False, sep="\t")
 
     ###### grit-informed aggregation methods ######
     ### raw grit as weights ###
@@ -153,10 +141,6 @@ for cell_line in ["ES2", "HCC44", "A549"]:
     ).assign(Metadata_agg_method="weighted", cell_line=cell_line)
     agg_meta_df = merge_metadata(cell_line, agg_df)
     # writing data
-    agg_meta_df.to_csv(
-        Path(results_folder + cell_line + "_weighted.tsv"), index=False, sep="\t"
-    )
+    agg_meta_df.to_csv(Path(results_folder + cell_line + "_weighted.tsv"), index=False, sep="\t")
 
-    print(
-        f"TOTAL TIME performing aggregation for cell_line {cell_line} : {str(datetime.now()-start_agg)}"
-    )
+    print(f"TOTAL TIME performing aggregation for cell_line {cell_line} : {str(datetime.now()-start_agg)}")

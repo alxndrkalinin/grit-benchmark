@@ -78,9 +78,7 @@ class CellHealthPredict:
 
         # Assert that the user specified y_transform is supported
         one_of_y_transform = ["raw", "zero-one", "binarize"]
-        assert (
-            y_transform in one_of_y_transform
-        ), "'{}' is not supported try one of: {}".format(
+        assert y_transform in one_of_y_transform, "'{}' is not supported try one of: {}".format(
             y_transform, ", ".join(one_of_y_transform)
         )
         self.y_transform = y_transform
@@ -106,9 +104,7 @@ class CellHealthPredict:
             self.min_class_count = class_count.min()
 
         # Fit the cross validation pipeline object
-        self.pipeline_fit = self.cv_pipeline.fit(
-            X=self.x_realigned_df, y=self.y_scaled_df
-        )
+        self.pipeline_fit = self.cv_pipeline.fit(X=self.x_realigned_df, y=self.y_scaled_df)
         self.is_fit = True
         return True
 
@@ -164,9 +160,9 @@ class CellHealthPredict:
         The transformed y variables
         """
         binarize_options = ["kmeans", "median", "sd"]
-        assert (
-            binarize_fit in binarize_options
-        ), "{} not supported. Provide one of {}".format(binarize_fit, binarize_options)
+        assert binarize_fit in binarize_options, "{} not supported. Provide one of {}".format(
+            binarize_fit, binarize_options
+        )
         if target == "None":
             target = self.target
 
@@ -183,9 +179,7 @@ class CellHealthPredict:
         elif y_transform == "binarize":
             if binarize_fit == "kmeans":
                 if not self.kmeans_fit:
-                    self.kmeans = KMeans(n_clusters=2, random_state=0).fit(
-                        np.reshape(y.values, (-1, 1))
-                    )
+                    self.kmeans = KMeans(n_clusters=2, random_state=0).fit(np.reshape(y.values, (-1, 1)))
                     self.kmeans_fit = True
                     y_scale = self.kmeans.labels_
                 else:
@@ -222,15 +216,11 @@ class CellHealthPredict:
         self.target = target
 
     def get_cv_results(self):
-        assert (
-            self.is_fit
-        ), "The model is not yet fit! Run fit_cell_health_target() first"
+        assert self.is_fit, "The model is not yet fit! Run fit_cell_health_target() first"
 
         cv_results_df = pd.concat(
             [
-                pd.DataFrame(self.pipeline_fit.cv_results_).drop(
-                    "params", axis="columns"
-                ),
+                pd.DataFrame(self.pipeline_fit.cv_results_).drop("params", axis="columns"),
                 pd.DataFrame.from_records(self.pipeline_fit.cv_results_["params"]),
             ],
             axis="columns",
@@ -267,13 +257,9 @@ class CellHealthPredict:
         """
         If decision_function, output continuous label
         """
-        assert (
-            self.is_fit
-        ), "The model is not yet fit! Run fit_cell_health_target() first"
+        assert self.is_fit, "The model is not yet fit! Run fit_cell_health_target() first"
         if decision_function:
-            assert (
-                self.y_transform == "binarize"
-            ), "decision_function only for classifiers not regressors"
+            assert self.y_transform == "binarize", "decision_function only for classifiers not regressors"
             y_pred = self.pipeline_fit.decision_function(x)
         else:
             y_pred = self.pipeline_fit.predict(x)
@@ -299,9 +285,7 @@ class CellHealthPredict:
         else:
             weights = final_classifier.coef_
 
-        coef_df = pd.DataFrame.from_dict(
-            {"feature": self.x_df.columns, "weight": weights}
-        )
+        coef_df = pd.DataFrame.from_dict({"feature": self.x_df.columns, "weight": weights})
 
         coef_df = coef_df.assign(
             abs_weight=coef_df.weight.abs(),
@@ -309,9 +293,7 @@ class CellHealthPredict:
             y_transform=self.y_transform,
             shuffle=self.shuffle_key,
         )
-        coef_df = coef_df.sort_values("abs_weight", ascending=False).reset_index(
-            drop=True
-        )
+        coef_df = coef_df.sort_values("abs_weight", ascending=False).reset_index(drop=True)
 
         if save_model:
             dump(final_classifier, model_file)
@@ -350,17 +332,13 @@ class CellHealthPredict:
 
         # If the input is a dataframe, make sure columns are aligned to training data
         if isinstance(x_test, pd.DataFrame):
-            assert (
-                x_test.columns.tolist() == self.x_realigned_df.columns.tolist()
-            ), "Features are not aligned!"
+            assert x_test.columns.tolist() == self.x_realigned_df.columns.tolist(), "Features are not aligned!"
 
             pd.testing.assert_index_equal(x_test.index, y_test.index, check_names=False)
 
             # Make sure missing data is removed
             y_true = y_test.loc[:, self.target]
-            x_test, y_true, self.n_test_samples_removed = self.realign_missing_data(
-                x_test, y_true
-            )
+            x_test, y_true, self.n_test_samples_removed = self.realign_missing_data(x_test, y_true)
 
             # Transform the target variable
             y_true = self.recode_y(
@@ -374,9 +352,7 @@ class CellHealthPredict:
             profile_ids = x_test.index.tolist()
 
         else:
-            y_pred = self.predict(
-                self.x_realigned_df, decision_function=decision_function
-            )
+            y_pred = self.predict(self.x_realigned_df, decision_function=decision_function)
             y_true = self.y_scaled_df
             profile_ids = self.x_realigned_df.index.tolist()
 
@@ -413,9 +389,7 @@ class CellHealthPredict:
         else:
             try:
                 auroc_weighted = roc_auc_score(y_true, y_pred, average="weighted")
-                aupr_weighted = average_precision_score(
-                    y_true, y_pred, average="weighted"
-                )
+                aupr_weighted = average_precision_score(y_true, y_pred, average="weighted")
             except ValueError:
                 auroc_weighted = np.nan
                 aupr_weighted = np.nan
@@ -454,7 +428,6 @@ class CellHealthPredict:
             output = [roc_df, pr_df]
 
         if return_y:
-
             y_true = (
                 pd.DataFrame(y_true)
                 .rename({self.target: "recode_target_value"}, axis="columns")
@@ -489,9 +462,7 @@ class CellHealthPredict:
         return output
 
 
-def load_train_test(
-    data_dir="data", consensus="median", drop_metadata=False, output_metadata_only=False
-):
+def load_train_test(data_dir="data", consensus="median", drop_metadata=False, output_metadata_only=False):
     """
     Load training and testing data
 
@@ -567,7 +538,6 @@ def load_models(model_dir="models", consensus="median", shuffle=False, transform
     model_dict = {}
     model_coef = {}
     for model_file in os.listdir(model_dir):
-
         if model_string not in model_file:
             continue
 
@@ -576,9 +546,7 @@ def load_models(model_dir="models", consensus="median", shuffle=False, transform
             continue
 
         model_file_full = os.path.join(model_dir, model_file)
-        cell_health_var = model_file.replace("cell_health_target_", "").replace(
-            "_{}.joblib".format(model_string), ""
-        )
+        cell_health_var = model_file.replace("cell_health_target_", "").replace("_{}.joblib".format(model_string), "")
 
         model_ = load(model_file_full)
 

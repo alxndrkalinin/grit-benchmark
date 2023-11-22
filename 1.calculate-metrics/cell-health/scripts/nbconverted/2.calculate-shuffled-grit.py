@@ -33,22 +33,12 @@ plate = "SQ00014613"
 dfs = {}
 data_file = pathlib.Path("data/cell_health_merged_feature_select.csv.gz")
 
-dfs["ctrl_based"] = (
-    pd.read_csv(data_file, sep=",")
-    .query("Metadata_Plate == @plate")
-    .reset_index(drop=True)
-)
+dfs["ctrl_based"] = pd.read_csv(data_file, sep=",").query("Metadata_Plate == @plate").reset_index(drop=True)
 
 whole_plate_dir = pathlib.Path(f"../../0.download-data/data/cell-health/profiles")
-data_file = pathlib.Path(
-    f"{whole_plate_dir}/cell_health_profiles_merged_wholeplate_normalized_featureselected.tsv.gz"
-)
+data_file = pathlib.Path(f"{whole_plate_dir}/cell_health_profiles_merged_wholeplate_normalized_featureselected.tsv.gz")
 
-dfs["whole_plate"] = (
-    pd.read_csv(data_file, sep="\t")
-    .query("Metadata_Plate == @plate")
-    .reset_index(drop=True)
-)
+dfs["whole_plate"] = pd.read_csv(data_file, sep="\t").query("Metadata_Plate == @plate").reset_index(drop=True)
 
 for norm_method in dfs:
     df = dfs[norm_method]
@@ -147,8 +137,6 @@ get_ipython().run_cell_magic(
 
 # Output results
 output_dir = "results"
-output_file = pathlib.Path(
-    f"{output_dir}/cell_health_grit_control_titration_{plate}.tsv"
-)
+output_file = pathlib.Path(f"{output_dir}/cell_health_grit_control_titration_{plate}.tsv")
 
 grit_results.to_csv(output_file, sep="\t", index=False)

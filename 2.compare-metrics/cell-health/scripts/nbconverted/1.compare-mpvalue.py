@@ -46,18 +46,12 @@ cell_health_grit_df.head()
 # Load mp value grit scores
 cell_health_mpvalue_file = pathlib.Path(f"{results_dir}/cell_health_mpvalue.tsv")
 
-cell_health_mpvalue_df = pd.read_csv(cell_health_mpvalue_file, sep="\t").query(
-    "barcode_control == 'cutting_control'"
-)
+cell_health_mpvalue_df = pd.read_csv(cell_health_mpvalue_file, sep="\t").query("barcode_control == 'cutting_control'")
 
-cell_health_mpvalue_df = cell_health_mpvalue_df.assign(
-    mp_value_neglog=-1 * np.log10(cell_health_mpvalue_df.mp_value)
-)
+cell_health_mpvalue_df = cell_health_mpvalue_df.assign(mp_value_neglog=-1 * np.log10(cell_health_mpvalue_df.mp_value))
 
 mask = cell_health_mpvalue_df.mp_value_neglog == np.inf
-cell_health_mpvalue_df.loc[mask, "mp_value_neglog"] = cell_health_mpvalue_df.loc[
-    ~mask, "mp_value_neglog"
-].max()
+cell_health_mpvalue_df.loc[mask, "mp_value_neglog"] = cell_health_mpvalue_df.loc[~mask, "mp_value_neglog"].max()
 
 print(cell_health_mpvalue_df.shape)
 cell_health_mpvalue_df.head()
@@ -95,9 +89,7 @@ mp_value_comparison_gg = (
     + gg.ylab("-log10(mp-Value)")
     + gg.facet_wrap("~num_permutations", ncol=4, labeller=gg.labeller(cols=col_func))
     + gg.theme_bw()
-    + gg.theme(
-        strip_background=gg.element_rect(color="black", height=0.15, fill="#fdfff4")
-    )
+    + gg.theme(strip_background=gg.element_rect(color="black", height=0.15, fill="#fdfff4"))
 )
 
 output_file = pathlib.Path(f"{output_dir}/cell_health_grit_mpvalue_comparison.png")
@@ -121,9 +113,7 @@ reprod_df.head()
 # In[8]:
 
 
-full_df = combined_df.query("num_permutations == 5000").merge(
-    reprod_df, on=["perturbation", "group", "cell_line"]
-)
+full_df = combined_df.query("num_permutations == 5000").merge(reprod_df, on=["perturbation", "group", "cell_line"])
 
 print(full_df.shape)
 full_df.head()
@@ -133,24 +123,18 @@ full_df.head()
 
 
 mp_value_comparison_gg = (
-    gg.ggplot(
-        full_df.dropna(), gg.aes(x="median_replicate_correlation", y="mp_value_neglog")
-    )
+    gg.ggplot(full_df.dropna(), gg.aes(x="median_replicate_correlation", y="mp_value_neglog"))
     + gg.geom_point(gg.aes(fill="cell_line", size="grit"), stroke=0.2, alpha=0.7)
     + gg.geom_vline(xintercept=0, linetype="dotted", color="red")
     + gg.scale_fill_manual(name="Cell Line", values=cell_line_colors)
     + gg.xlab("Median replicate correlation")
     + gg.ylab("-log10(mp-Value)")
     + gg.theme_bw()
-    + gg.theme(
-        strip_background=gg.element_rect(color="black", height=0.15, fill="#fdfff4")
-    )
+    + gg.theme(strip_background=gg.element_rect(color="black", height=0.15, fill="#fdfff4"))
 )
 
 
-output_file = pathlib.Path(
-    f"{output_dir}/cell_health_mpvalue_replicatereproducibility_comparison.png"
-)
+output_file = pathlib.Path(f"{output_dir}/cell_health_mpvalue_replicatereproducibility_comparison.png")
 mp_value_comparison_gg.save(output_file, dpi=500, height=3, width=6.5)
 
 mp_value_comparison_gg

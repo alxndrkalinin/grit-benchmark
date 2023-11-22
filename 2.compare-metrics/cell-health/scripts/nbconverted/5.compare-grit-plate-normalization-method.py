@@ -98,9 +98,7 @@ norm_control_gg = (
     + grit_theme
 )
 
-output_file = pathlib.Path(
-    f"{output_dir}/cell_health_grit_platenormalization_comparison.png"
-)
+output_file = pathlib.Path(f"{output_dir}/cell_health_grit_platenormalization_comparison.png")
 norm_control_gg.save(output_file, dpi=500, height=3, width=6.5)
 
 norm_control_gg

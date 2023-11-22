@@ -35,9 +35,7 @@ output_dir = "figures"
 
 bulk_grit_df = pd.read_csv(results_file, sep="\t")
 
-bulk_grit_df.loc[:, "gene"] = pd.Categorical(
-    bulk_grit_df.gene, categories=bulk_grit_df.gene.unique()
-)
+bulk_grit_df.loc[:, "gene"] = pd.Categorical(bulk_grit_df.gene, categories=bulk_grit_df.gene.unique())
 
 print(bulk_grit_df.shape)
 bulk_grit_df.head(2)
@@ -56,9 +54,7 @@ global_gg = (
     + gg.ggtitle(f"{gse_id} (Jost et al. 2020 CRISPRi)")
 )
 
-output_file = pathlib.Path(
-    f"{output_dir}/{gse_id}_crispri_grit_relative_activity_comparison.png"
-)
+output_file = pathlib.Path(f"{output_dir}/{gse_id}_crispri_grit_relative_activity_comparison.png")
 global_gg.save(output_file, dpi=500, height=3.5, width=4)
 
 global_gg
@@ -81,9 +77,7 @@ gene_gg = (
     )
 )
 
-output_file = pathlib.Path(
-    f"{output_dir}/{gse_id}_crispri_grit_relative_activity_comparison.png"
-)
+output_file = pathlib.Path(f"{output_dir}/{gse_id}_crispri_grit_relative_activity_comparison.png")
 gene_gg.save(output_file, dpi=500, height=5, width=6)
 
 gene_gg
@@ -109,15 +103,11 @@ sc_gene_exp_df.head()
 
 
 # Load single cell grit results
-sc_results_file = pathlib.Path(
-    f"{perturbseq_results_dir}/{gse_id}_single_cell_grit.tsv.gz"
-)
+sc_results_file = pathlib.Path(f"{perturbseq_results_dir}/{gse_id}_single_cell_grit.tsv.gz")
 sc_df = pd.read_csv(sc_results_file, sep="\t")
 
 # Load UMAP embeddings
-sc_embeddings_file = pathlib.Path(
-    f"{perturbseq_results_dir}/{gse_id}_single_cell_umap_embeddings.tsv.gz"
-)
+sc_embeddings_file = pathlib.Path(f"{perturbseq_results_dir}/{gse_id}_single_cell_umap_embeddings.tsv.gz")
 sc_embeddings_df = pd.read_csv(sc_embeddings_file, sep="\t")
 
 sc_df = sc_embeddings_df.merge(
@@ -155,9 +145,7 @@ sc_df.Metadata_gene_identity.value_counts()
 
 
 global_gg = (
-    gg.ggplot(
-        sc_df.dropna(subset=["gene"]), gg.aes(x="relative_activity_day5", y="grit")
-    )
+    gg.ggplot(sc_df.dropna(subset=["gene"]), gg.aes(x="relative_activity_day5", y="grit"))
     + gg.geom_density_2d()
     + gg.geom_point(size=0.2, alpha=0.01)
     + gg.theme_bw()
@@ -166,9 +154,7 @@ global_gg = (
     + gg.ggtitle(f"{gse_id} (Jost et al. 2020 CRISPRi)")
 )
 
-output_file = pathlib.Path(
-    f"{output_dir}/{gse_id}_singlecell_crispri_grit_relative_activity_comparison.png"
-)
+output_file = pathlib.Path(f"{output_dir}/{gse_id}_singlecell_crispri_grit_relative_activity_comparison.png")
 global_gg.save(output_file, dpi=500, height=5, width=6)
 
 global_gg
@@ -178,9 +164,7 @@ global_gg
 
 
 gene_gg = (
-    gg.ggplot(
-        sc_df.dropna(subset=["gene"]), gg.aes(x="relative_activity_day5", y="grit")
-    )
+    gg.ggplot(sc_df.dropna(subset=["gene"]), gg.aes(x="relative_activity_day5", y="grit"))
     + gg.geom_density_2d()
     + gg.geom_point(alpha=0.05, size=0.1)
     + gg.theme_bw()
@@ -194,9 +178,7 @@ gene_gg = (
     )
 )
 
-output_file = pathlib.Path(
-    f"{output_dir}/{gse_id}_singlecell_by_gene_crispri_grit_relative_activity_comparison.png"
-)
+output_file = pathlib.Path(f"{output_dir}/{gse_id}_singlecell_by_gene_crispri_grit_relative_activity_comparison.png")
 gene_gg.save(output_file, dpi=500, height=5, width=6)
 
 gene_gg
@@ -215,21 +197,15 @@ for gene in sc_df.gene.unique():
 
     gene_embedding_df = gene_embedding_df.assign(
         grit_facet_label=(
-            gene_embedding_df.grit_gene
-            + " "
-            + gene_embedding_df.relative_activity_day5.round(3).astype(str)
+            gene_embedding_df.grit_gene + " " + gene_embedding_df.relative_activity_day5.round(3).astype(str)
         )
     )
 
     # Setup data frame for plotting
-    gene_embedding_df.loc[
-        gene_embedding_df.Metadata_gene_identity == "neg", "grit_facet_label"
-    ] = "Negative Ctrl"
+    gene_embedding_df.loc[gene_embedding_df.Metadata_gene_identity == "neg", "grit_facet_label"] = "Negative Ctrl"
     facet_order = ["Negative Ctrl"] + [
         f"{gene_embedding_df.grit_gene.unique()[0]} " + str(x)
-        for x in sorted(
-            gene_embedding_df.relative_activity_day5.dropna().unique().round(3)
-        )
+        for x in sorted(gene_embedding_df.relative_activity_day5.dropna().unique().round(3))
     ]
     gene_embedding_df.loc[:, "grit_facet_label"] = pd.Categorical(
         gene_embedding_df.grit_facet_label, categories=facet_order
@@ -248,20 +224,14 @@ for gene in sc_df.gene.unique():
         + gg.theme(strip_background=gg.element_rect(colour="black", fill="#fdfff4"))
     )
 
-    output_file = pathlib.Path(
-        f"{output_dir}/gene_umaps/{gse_id}_{gene}_singlecell_umap_grit.png"
-    )
+    output_file = pathlib.Path(f"{output_dir}/gene_umaps/{gse_id}_{gene}_singlecell_umap_grit.png")
     gene_gg.save(output_file, dpi=500, height=5, width=6)
     print(gene_gg)
 
     # Some genes were also directly measured. How does the expression of these look in UMAP space?
     if gene in sc_gene_exp_df.columns:
-        meta_merge_cols = [
-            x for x in sc_gene_exp_df.columns if x.startswith("Metadata_")
-        ]
-        sc_geneexp_embed_df = gene_embedding_df.merge(
-            sc_gene_exp_df, on=meta_merge_cols, how="left"
-        )
+        meta_merge_cols = [x for x in sc_gene_exp_df.columns if x.startswith("Metadata_")]
+        sc_geneexp_embed_df = gene_embedding_df.merge(sc_gene_exp_df, on=meta_merge_cols, how="left")
 
         geneexp_gg = (
             gg.ggplot(
@@ -277,8 +247,6 @@ for gene in sc_df.gene.unique():
             + gg.theme(strip_background=gg.element_rect(colour="black", fill="#fdfff4"))
         )
 
-        output_file = pathlib.Path(
-            f"{output_dir}/gene_umaps/{gse_id}_{gene}_singlecell_umap_expression.png"
-        )
+        output_file = pathlib.Path(f"{output_dir}/gene_umaps/{gse_id}_{gene}_singlecell_umap_expression.png")
         geneexp_gg.save(output_file, dpi=500, height=5, width=6)
         print(geneexp_gg)

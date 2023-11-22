@@ -42,12 +42,8 @@ corr_replicating_df = pd.read_csv(
     sep="\t",
     converters={"Null_corr": literal_eval, "Replicate_corr": literal_eval},
 )
-corr_replicating_df.Null_corr = [
-    [float(a) for a in x] for x in corr_replicating_df.Null_corr
-]
-corr_replicating_df.Replicate_corr = [
-    [float(a) for a in x] for x in corr_replicating_df.Replicate_corr
-]
+corr_replicating_df.Null_corr = [[float(a) for a in x] for x in corr_replicating_df.Null_corr]
+corr_replicating_df.Replicate_corr = [[float(a) for a in x] for x in corr_replicating_df.Replicate_corr]
 corr_replicating_df
 
 
@@ -77,9 +73,7 @@ for i in range(n_experiments):
         bins=20,
         alpha=0.5,
     )
-    plt.axvline(
-        corr_replicating_df.loc[i, "Value_95"], linewidth=3, label="95% threshold"
-    )
+    plt.axvline(corr_replicating_df.loc[i, "Value_95"], linewidth=3, label="95% threshold")
     plt.legend(fontsize=20)
     plt.title(
         f"Experiment = {corr_replicating_df.loc[i,'Experiment']}\n"
@@ -103,12 +97,8 @@ corr_matching_df = pd.read_csv(
     sep="\t",
     converters={"Matching_corr": literal_eval, "Null_Matching": literal_eval},
 )
-corr_matching_df.Matching_corr = [
-    [float(a) for a in x] for x in corr_matching_df.Matching_corr
-]
-corr_matching_df.Null_Matching = [
-    [float(a) for a in x] for x in corr_matching_df.Null_Matching
-]
+corr_matching_df.Matching_corr = [[float(a) for a in x] for x in corr_matching_df.Matching_corr]
+corr_matching_df.Null_Matching = [[float(a) for a in x] for x in corr_matching_df.Null_Matching]
 
 
 # In[7]:

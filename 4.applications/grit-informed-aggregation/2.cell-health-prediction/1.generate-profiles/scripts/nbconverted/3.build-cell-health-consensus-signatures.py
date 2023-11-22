@@ -40,11 +40,7 @@ from scripts.utils import calculate_weighted_agg
 
 input_folder = "data/processed/"
 output_folder = "data/profiles/"
-method_list = list(
-    set(
-        [(x.split("_")[1:][0]).split(".")[0] for x in glob.glob(input_folder + "*.tsv")]
-    )
-)
+method_list = list(set([(x.split("_")[1:][0]).split(".")[0] for x in glob.glob(input_folder + "*.tsv")]))
 
 # since single-cell grit was not calculated for EMPTY wells, we will use median-aggregated well-level profiles
 # for EMPTY perturbations to form the EMPTY consensus profile for the cell health prediction pipeline
@@ -140,9 +136,7 @@ commit = "8244680d6e6db1a2bc1f709b9dabf7783c4a9670"
 base_url = f"https://github.com/broadinstitute/cell-health/raw/{commit}"
 url = f"{base_url}/1.generate-profiles/data/labels/normalized_cell_health_labels.tsv"
 
-y_df = pd.read_csv(url, sep="\t").drop(
-    ["plate_name", "well_col", "well_row"], axis="columns"
-)
+y_df = pd.read_csv(url, sep="\t").drop(["plate_name", "well_col", "well_row"], axis="columns")
 
 print(y_df.shape)
 y_df.head(3)
@@ -243,17 +237,13 @@ x_median_df = aggregate(
 )
 
 x_median_df = (
-    x_median_df.query(
-        "Metadata_pert_name in @all_measurements_df.Metadata_pert_name.unique()"
-    )
+    x_median_df.query("Metadata_pert_name in @all_measurements_df.Metadata_pert_name.unique()")
     .query("Metadata_cell_line in @all_measurements_df.Metadata_cell_line.unique()")
     .reset_index(drop=True)
     .reset_index()
     .rename({"index": "Metadata_profile_id"}, axis="columns")
 )
-x_median_df.Metadata_profile_id = [
-    "profile_{}".format(x) for x in x_median_df.Metadata_profile_id
-]
+x_median_df.Metadata_profile_id = ["profile_{}".format(x) for x in x_median_df.Metadata_profile_id]
 
 print(x_median_df.shape)
 x_median_df.head()
@@ -263,9 +253,7 @@ x_median_df.head()
 
 
 # Output Profile Mapping for Downstream Analysis
-profile_id_mapping_df = x_median_df.loc[
-    :, x_median_df.columns.str.startswith("Metadata")
-]
+profile_id_mapping_df = x_median_df.loc[:, x_median_df.columns.str.startswith("Metadata")]
 file = os.path.join("data", "{}_profile_id_metadata_mapping.tsv".format(method))
 print(file)
 profile_id_mapping_df.to_csv(file, sep="\t", index=False)
@@ -280,9 +268,7 @@ profile_id_mapping_df.head()
 
 
 cell_health_meta_features = ["cell_id", "guide"]
-cell_health_features = y_df.drop(
-    cell_health_meta_features, axis="columns"
-).columns.tolist()
+cell_health_features = y_df.drop(cell_health_meta_features, axis="columns").columns.tolist()
 y_meta_merge_cols = ["Metadata_profile_id", "Metadata_pert_name", "Metadata_cell_line"]
 
 
@@ -311,12 +297,7 @@ y_median_df = y_median_df.reset_index(drop=True).merge(
 )
 
 # Get columns in correct order
-y_columns = (
-    y_meta_merge_cols
-    + y_median_df.loc[
-        :, ~y_median_df.columns.str.startswith("Metadata_")
-    ].columns.tolist()
-)
+y_columns = y_meta_merge_cols + y_median_df.loc[:, ~y_median_df.columns.str.startswith("Metadata_")].columns.tolist()
 
 y_median_df = y_median_df.loc[:, y_columns].drop(["guide", "cell_id"], axis="columns")
 
@@ -329,19 +310,13 @@ y_median_df.head(5)
 
 # Confirm that matrices are aligned
 
-pd.testing.assert_series_equal(
-    x_median_df.Metadata_profile_id, y_median_df.Metadata_profile_id, check_names=True
-)
+pd.testing.assert_series_equal(x_median_df.Metadata_profile_id, y_median_df.Metadata_profile_id, check_names=True)
 
 # Are the guides aligned?
-pd.testing.assert_series_equal(
-    x_median_df.Metadata_pert_name, y_median_df.Metadata_pert_name, check_names=True
-)
+pd.testing.assert_series_equal(x_median_df.Metadata_pert_name, y_median_df.Metadata_pert_name, check_names=True)
 
 # Are the cells aligned?
-pd.testing.assert_series_equal(
-    x_median_df.Metadata_cell_line, y_median_df.Metadata_cell_line, check_names=True
-)
+pd.testing.assert_series_equal(x_median_df.Metadata_cell_line, y_median_df.Metadata_cell_line, check_names=True)
 
 
 # # apply MODZ consensus aggregation
@@ -369,9 +344,7 @@ x_consensus_df = (
     .reset_index()
     .rename({"index": "Metadata_profile_id"}, axis="columns")
 )
-x_consensus_df.Metadata_profile_id = [
-    "profile_{}".format(x) for x in x_consensus_df.Metadata_profile_id
-]
+x_consensus_df.Metadata_profile_id = ["profile_{}".format(x) for x in x_consensus_df.Metadata_profile_id]
 
 print(x_consensus_df.shape)
 x_consensus_df.head(5)

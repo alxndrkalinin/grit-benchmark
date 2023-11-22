@@ -79,13 +79,10 @@ for cell_line in df.Metadata_cell_line.unique():
         compartment_features = infer_cp_features(df, compartments=compartment)
 
         for drop in [True, False]:
-
             if drop:
                 subset_df = df.drop(compartment_features, axis="columns")
                 dropped_or_exclusive = "dropped"
-                use_features = subset_df.drop(
-                    meta_features, axis="columns"
-                ).columns.tolist()
+                use_features = subset_df.drop(meta_features, axis="columns").columns.tolist()
             else:
                 subset_df = df.loc[:, meta_features + compartment_features]
                 dropped_or_exclusive = "exclusive"
@@ -123,26 +120,19 @@ grit_compartment_results.head()
 # In[23]:
 
 
-feature_group_compartments = list(
-    set(["_".join(x.split("_")[0:2]) for x in all_features])
-)
+feature_group_compartments = list(set(["_".join(x.split("_")[0:2]) for x in all_features]))
 
 grit_subcompartment_results = []
 for cell_line in df.Metadata_cell_line.unique():
     for compartment_group in feature_group_compartments:
         compartment, feature_group = compartment_group.split("_")
-        compartment_features = df.loc[
-            :, df.columns.str.startswith(compartment_group)
-        ].columns.tolist()
+        compartment_features = df.loc[:, df.columns.str.startswith(compartment_group)].columns.tolist()
 
         for drop in [True, False]:
-
             if drop:
                 subset_df = df.drop(compartment_features, axis="columns")
                 dropped_or_exclusive = "dropped"
-                use_features = subset_df.drop(
-                    meta_features, axis="columns"
-                ).columns.tolist()
+                use_features = subset_df.drop(meta_features, axis="columns").columns.tolist()
             else:
                 subset_df = df.loc[:, meta_features + compartment_features]
                 dropped_or_exclusive = "exclusive"
@@ -169,9 +159,7 @@ for cell_line in df.Metadata_cell_line.unique():
 
             grit_subcompartment_results.append(result)
 
-grit_subcompartment_results = pd.concat(grit_subcompartment_results).reset_index(
-    drop=True
-)
+grit_subcompartment_results = pd.concat(grit_subcompartment_results).reset_index(drop=True)
 
 print(grit_subcompartment_results.shape)
 grit_subcompartment_results.head()
@@ -190,13 +178,10 @@ for cell_line in df.Metadata_cell_line.unique():
         channel_features = df.loc[:, df.columns.str.contains(channel)].columns.tolist()
 
         for drop in [True, False]:
-
             if drop:
                 subset_df = df.drop(channel_features, axis="columns")
                 dropped_or_exclusive = "dropped"
-                use_features = subset_df.drop(
-                    meta_features, axis="columns"
-                ).columns.tolist()
+                use_features = subset_df.drop(meta_features, axis="columns").columns.tolist()
             else:
                 subset_df = df.loc[:, meta_features + channel_features]
                 dropped_or_exclusive = "exclusive"
@@ -254,6 +239,4 @@ full_grit_results.head()
 output_dir = "results"
 output_file = pathlib.Path(f"{output_dir}/cell_health_grit_compartments.tsv.gz")
 
-full_grit_results.to_csv(
-    output_file, sep="\t", compression={"method": "gzip", "mtime": 1}, index=False
-)
+full_grit_results.to_csv(output_file, sep="\t", compression={"method": "gzip", "mtime": 1}, index=False)

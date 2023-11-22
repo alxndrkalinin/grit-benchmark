@@ -31,9 +31,7 @@ np.random.seed(2021)
 
 gse_id = "GSE132080"
 perturbseq_data_dir = pathlib.Path("../../0.download-data/data/perturbseq/")
-perturbseq_screen_phenotypes = (
-    "paper_supplement/Table_S16_perturb-seq_screen_phenotypes.txt"
-)
+perturbseq_screen_phenotypes = "paper_supplement/Table_S16_perturb-seq_screen_phenotypes.txt"
 
 
 # In[4]:
@@ -89,9 +87,7 @@ bulk_subset_df = bulk_df.loc[:, ["Metadata_guide_identity"] + genes_to_retain]
 
 # create a column for the gene
 bulk_subset_df = bulk_df.assign(
-    Metadata_gene_identity=[
-        x.split("_")[0] for x in bulk_subset_df.Metadata_guide_identity
-    ]
+    Metadata_gene_identity=[x.split("_")[0] for x in bulk_subset_df.Metadata_guide_identity]
 ).query("Metadata_gene_identity != '*'")
 
 print(bulk_subset_df.shape)
@@ -152,13 +148,9 @@ result.head(3)
 
 
 # Determine a proportion of negative control guide population
-sc_neg_controls_df = sc_gene_exp_df.query(
-    "Metadata_guide_identity in @neg_controls"
-).sample(frac=0.2)
+sc_neg_controls_df = sc_gene_exp_df.query("Metadata_guide_identity in @neg_controls").sample(frac=0.2)
 
-sc_neg_controls = sc_neg_controls_df.query(
-    "Metadata_guide_identity in @neg_controls"
-).Metadata_cell_identity.tolist()
+sc_neg_controls = sc_neg_controls_df.query("Metadata_guide_identity in @neg_controls").Metadata_cell_identity.tolist()
 
 replicate_group_grit = {
     "profile_col": "Metadata_cell_identity",
@@ -182,9 +174,7 @@ for gene in genes:
         guides = subset_sc_df.Metadata_guide_identity.unique()
 
         # Use the same controls in every experiment
-        subset_sc_df = pd.concat([subset_sc_df, sc_neg_controls_df]).reset_index(
-            drop=True
-        )
+        subset_sc_df = pd.concat([subset_sc_df, sc_neg_controls_df]).reset_index(drop=True)
 
         # Apply UMAP to single cell profiles (all profiles of one gene + neg controls)
         embedding = umap.UMAP().fit_transform(subset_sc_df.loc[:, genes_to_retain])
@@ -222,9 +212,7 @@ for gene in genes:
                 grit_control_perts=[str(x) for x in sc_neg_controls],
             )
 
-            all_sc_grit_results.append(
-                sc_grit_result.assign(grit_gene=gene, grit_guide=guide)
-            )
+            all_sc_grit_results.append(sc_grit_result.assign(grit_gene=gene, grit_guide=guide))
 
 
 # In[13]:
@@ -233,12 +221,8 @@ for gene in genes:
 all_sc_umap_embeddings = pd.concat(all_sc_umap_embeddings).reset_index(drop=True)
 
 # Output file
-output_results_file = pathlib.Path(
-    f"results/{gse_id}_single_cell_umap_embeddings.tsv.gz"
-)
-all_sc_umap_embeddings.to_csv(
-    output_results_file, sep="\t", compression="gzip", index=False
-)
+output_results_file = pathlib.Path(f"results/{gse_id}_single_cell_umap_embeddings.tsv.gz")
+all_sc_umap_embeddings.to_csv(output_results_file, sep="\t", compression="gzip", index=False)
 
 print(all_sc_umap_embeddings.shape)
 all_sc_umap_embeddings.head()
@@ -251,9 +235,7 @@ all_sc_grit_results = pd.concat(all_sc_grit_results).reset_index(drop=True)
 
 # Output file
 output_results_file = pathlib.Path(f"results/{gse_id}_single_cell_grit.tsv.gz")
-all_sc_grit_results.to_csv(
-    output_results_file, sep="\t", compression="gzip", index=False
-)
+all_sc_grit_results.to_csv(output_results_file, sep="\t", compression="gzip", index=False)
 
 print(all_sc_grit_results.shape)
 all_sc_grit_results.head()

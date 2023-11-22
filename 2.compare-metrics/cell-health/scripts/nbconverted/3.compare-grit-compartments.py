@@ -28,9 +28,7 @@ output_dir = pathlib.Path("figures/compartment_drop")
 
 cell_health_dir = pathlib.Path("../../1.calculate-metrics/cell-health/results")
 grit_file = pathlib.Path(f"{cell_health_dir}/cell_health_grit.tsv")
-compartment_grit_file = pathlib.Path(
-    f"{cell_health_dir}/cell_health_grit_compartments.tsv.gz"
-)
+compartment_grit_file = pathlib.Path(f"{cell_health_dir}/cell_health_grit_compartments.tsv.gz")
 
 
 # In[3]:
@@ -66,9 +64,7 @@ compartment_grit_results = pd.read_csv(compartment_grit_file, sep="\t")
 
 
 per_compartment_df = (
-    compartment_grit_results.query("compartment != 'all'")
-    .query("feature_group == 'all'")
-    .query("channel == 'all'")
+    compartment_grit_results.query("compartment != 'all'").query("feature_group == 'all'").query("channel == 'all'")
 )
 
 print(pd.crosstab(per_compartment_df.num_features, per_compartment_df.compartment))
@@ -87,9 +83,7 @@ per_compartment_df = per_compartment_df.pivot(
 ).reset_index()
 
 per_compartment_df = (
-    per_compartment_df.assign(
-        channel_signal=per_compartment_df.exclusive - per_compartment_df.dropped
-    )
+    per_compartment_df.assign(channel_signal=per_compartment_df.exclusive - per_compartment_df.dropped)
     .sort_values(by="channel_signal", ascending=False)
     .reset_index(drop=True)
 )
@@ -146,9 +140,7 @@ per_featuregroup_df = (
 )
 
 per_featuregroup_df = (
-    per_featuregroup_df.assign(
-        channel_signal=per_featuregroup_df.exclusive - per_featuregroup_df.dropped
-    )
+    per_featuregroup_df.assign(channel_signal=per_featuregroup_df.exclusive - per_featuregroup_df.dropped)
     .sort_values(by="channel_signal", ascending=False)
     .reset_index(drop=True)
 )
@@ -197,9 +189,7 @@ per_channel_df = (
 )
 
 per_channel_df = (
-    per_channel_df.assign(
-        channel_signal=per_channel_df.exclusive - per_channel_df.dropped
-    )
+    per_channel_df.assign(channel_signal=per_channel_df.exclusive - per_channel_df.dropped)
     .sort_values(by="channel_signal", ascending=False)
     .reset_index(drop=True)
 )

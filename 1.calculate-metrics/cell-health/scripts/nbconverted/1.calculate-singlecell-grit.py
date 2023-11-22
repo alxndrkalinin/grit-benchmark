@@ -64,10 +64,7 @@ plates = {
 # Only process ES2 plates
 sc_dir = pathlib.Path("../../0.download-data/data/cell_health/normalized/")
 
-plate_files = {
-    plate: pathlib.Path(f"{sc_dir}/{plate}_normalized_featureselected.csv.gz")
-    for plate in plates
-}
+plate_files = {plate: pathlib.Path(f"{sc_dir}/{plate}_normalized_featureselected.csv.gz") for plate in plates}
 plate_files
 
 
@@ -82,9 +79,7 @@ for plate in plate_files:
         .rename({"index": "Metadata_cell_identity"}, axis="columns")
     )
 
-    sc_df.loc[:, "Metadata_cell_identity"] = [
-        f"cell_{x}" for x in sc_df.Metadata_cell_identity
-    ]
+    sc_df.loc[:, "Metadata_cell_identity"] = [f"cell_{x}" for x in sc_df.Metadata_cell_identity]
 
     print(sc_df.shape)
 
@@ -94,9 +89,7 @@ for plate in plate_files:
     sample_frac = sample_frac_cellline[cell_line_id]
 
     neg_controls_df = (
-        sc_df.query("Metadata_gene_name in @control_group_genes_cut")
-        .sample(frac=sample_frac)
-        .reset_index(drop=True)
+        sc_df.query("Metadata_gene_name in @control_group_genes_cut").sample(frac=sample_frac).reset_index(drop=True)
     )
 
     control_group_guides_cut = neg_controls_df.Metadata_pert_name.unique()
@@ -125,9 +118,7 @@ for plate in plate_files:
         # Combine results with single cell dataframe
         embedding_df = pd.concat(
             [
-                subset_sc_df.drop(morph_features, axis="columns").reset_index(
-                    drop=True
-                ),
+                subset_sc_df.drop(morph_features, axis="columns").reset_index(drop=True),
                 pd.DataFrame(embedding, columns=["umap_0", "umap_1"]),
             ],
             axis="columns",
@@ -143,9 +134,7 @@ for plate in plate_files:
         # Combine results with single cell dataframe
         phate_embedding_df = pd.concat(
             [
-                subset_sc_df.drop(morph_features, axis="columns").reset_index(
-                    drop=True
-                ),
+                subset_sc_df.drop(morph_features, axis="columns").reset_index(drop=True),
                 pd.DataFrame(Y_phate, columns=["phate_0", "phate_1"]),
             ],
             axis="columns",
@@ -171,33 +160,19 @@ for plate in plate_files:
                 grit_control_perts=sc_neg_control_cells,
             ).assign(gene=gene, guide=guide)
 
-            all_sc_grit_results.append(
-                sc_grit_result.assign(grit_gene=gene, grit_guide=guide)
-            )
+            all_sc_grit_results.append(sc_grit_result.assign(grit_gene=gene, grit_guide=guide))
 
     # Output results
     all_sc_umap_embeddings = pd.concat(all_sc_umap_embeddings).reset_index(drop=True)
-    output_results_file = pathlib.Path(
-        f"results/cellhealth_single_cell_umap_embeddings_{plate}_chr2.tsv.gz"
-    )
-    all_sc_umap_embeddings.to_csv(
-        output_results_file, sep="\t", compression="gzip", index=False
-    )
+    output_results_file = pathlib.Path(f"results/cellhealth_single_cell_umap_embeddings_{plate}_chr2.tsv.gz")
+    all_sc_umap_embeddings.to_csv(output_results_file, sep="\t", compression="gzip", index=False)
 
     all_sc_phate_embeddings = pd.concat(all_sc_phate_embeddings).reset_index(drop=True)
-    output_results_file = pathlib.Path(
-        f"results/cellhealth_single_cell_phate_embeddings_{plate}_chr2.tsv.gz"
-    )
-    all_sc_phate_embeddings.to_csv(
-        output_results_file, sep="\t", compression="gzip", index=False
-    )
+    output_results_file = pathlib.Path(f"results/cellhealth_single_cell_phate_embeddings_{plate}_chr2.tsv.gz")
+    all_sc_phate_embeddings.to_csv(output_results_file, sep="\t", compression="gzip", index=False)
 
     all_sc_grit_results = pd.concat(all_sc_grit_results).reset_index(drop=True)
-    output_results_file = pathlib.Path(
-        f"results/cellhealth_single_cell_grit_{plate}_chr2.tsv.gz"
-    )
-    all_sc_grit_results.to_csv(
-        output_results_file, sep="\t", compression="gzip", index=False
-    )
+    output_results_file = pathlib.Path(f"results/cellhealth_single_cell_grit_{plate}_chr2.tsv.gz")
+    all_sc_grit_results.to_csv(output_results_file, sep="\t", compression="gzip", index=False)
     print("Done.")
     print("\n")

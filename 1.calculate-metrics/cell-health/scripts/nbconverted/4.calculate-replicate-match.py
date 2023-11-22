@@ -55,9 +55,7 @@ similarity_melted_df = metric_melt(
     eval_metric=operation,
 )
 
-similarity_melted_df = assign_replicates(
-    similarity_melted_df=similarity_melted_df, replicate_groups=replicate_groups
-)
+similarity_melted_df = assign_replicates(similarity_melted_df=similarity_melted_df, replicate_groups=replicate_groups)
 
 print(similarity_melted_df.shape)
 similarity_melted_df.head()

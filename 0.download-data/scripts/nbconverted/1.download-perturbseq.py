@@ -80,9 +80,7 @@ for data_type in files:
         file = files[data_type]["download"]
         file = pathlib.Path(f"{output_dir}/{file}")
 
-        rename_and_gunzip_file = pathlib.Path(
-            f"{output_dir}/{files[data_type]['rename']}"
-        )
+        rename_and_gunzip_file = pathlib.Path(f"{output_dir}/{files[data_type]['rename']}")
         rename_and_gunzip_file.parent.mkdir(exist_ok=True)
 
         print(f"Now extracting {file} to {rename_and_gunzip_file}")
@@ -104,9 +102,5 @@ download_file(paper_supplement_filename, paper_supplement_base_url, output_dir)
 # In[17]:
 
 
-print(
-    f"Now extracting {paper_supplement_filename} to {output_dir / paper_supplement_dir}"
-)
-shutil.unpack_archive(
-    output_dir / paper_supplement_filename, output_dir / paper_supplement_dir
-)
+print(f"Now extracting {paper_supplement_filename} to {output_dir / paper_supplement_dir}")
+shutil.unpack_archive(output_dir / paper_supplement_filename, output_dir / paper_supplement_dir)

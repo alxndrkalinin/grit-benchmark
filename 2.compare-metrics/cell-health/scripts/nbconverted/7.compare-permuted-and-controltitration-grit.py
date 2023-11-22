@@ -134,9 +134,7 @@ cell_health_update_construct_two_df = (
     .assign(grit_type="real")
 )
 
-cell_health_update_construct_two_df.shuffle_method = (
-    "Only metadata shuffled (controls fixed)"
-)
+cell_health_update_construct_two_df.shuffle_method = "Only metadata shuffled (controls fixed)"
 
 cell_health_update_df = pd.concat(
     [

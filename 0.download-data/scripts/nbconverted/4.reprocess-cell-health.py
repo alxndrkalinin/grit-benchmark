@@ -19,17 +19,13 @@ from pycytominer import normalize, feature_select
 # In[2]:
 
 
-def normalize_profile(
-    plate, output_dir, commit="cd91bd0daacef2b5ea25dcceb62482bb664d9de1"
-):
+def normalize_profile(plate, output_dir, commit="cd91bd0daacef2b5ea25dcceb62482bb664d9de1"):
     link = f"https://github.com/broadinstitute/cell-health/raw/{commit}/1.generate-profiles/data/profiles/{plate}/{plate}_augmented.csv.gz"
 
     annotate_df = pd.read_csv(link)
 
     norm_file = pathlib.Path(f"{output_dir}/{plate}_wholeplate_normalized.csv.gz")
-    feat_select_file = pathlib.Path(
-        f"{output_dir}/{plate}_wholeplate_normalized_feature_selected.csv.gz"
-    )
+    feat_select_file = pathlib.Path(f"{output_dir}/{plate}_wholeplate_normalized_feature_selected.csv.gz")
 
     normalize(
         profiles=annotate_df,
@@ -152,7 +148,5 @@ x_df.head(2)
 
 
 # Output
-profile_file = pathlib.Path(
-    f"{output_dir}/cell_health_profiles_merged_wholeplate_normalized_featureselected.tsv.gz"
-)
+profile_file = pathlib.Path(f"{output_dir}/cell_health_profiles_merged_wholeplate_normalized_featureselected.tsv.gz")
 x_df.to_csv(profile_file, index=False, sep="\t")

@@ -28,12 +28,8 @@ output_dir = pathlib.Path("figures/replicate_reproducibility")
 
 cell_health_dir = pathlib.Path("../../1.calculate-metrics/cell-health/results")
 grit_file = pathlib.Path(f"{cell_health_dir}/cell_health_grit.tsv")
-non_replicate_cor_file = pathlib.Path(
-    f"{cell_health_dir}/cell_health_nonreplicate_95thpercentile.tsv"
-)
-reprod_file = pathlib.Path(
-    f"{cell_health_dir}/cell_health_replicate_reproducibility.tsv"
-)
+non_replicate_cor_file = pathlib.Path(f"{cell_health_dir}/cell_health_nonreplicate_95thpercentile.tsv")
+reprod_file = pathlib.Path(f"{cell_health_dir}/cell_health_replicate_reproducibility.tsv")
 
 
 # In[3]:
@@ -66,15 +62,11 @@ grit_df = (
 
 reprod_df = pd.read_csv(reprod_file, sep="\t")
 
-grit_df = grit_df.merge(
-    reprod_df, on=["perturbation", "group", "cell_line"], how="inner"
-).dropna()
+grit_df = grit_df.merge(reprod_df, on=["perturbation", "group", "cell_line"], how="inner").dropna()
 
 grit_df = grit_df.assign(
-    replicate_over_cor=grit_df.median_replicate_correlation
-    / grit_df.median_control_correlation,
-    replicate_over_oneminuscor=grit_df.median_replicate_correlation
-    / (1 - grit_df.median_control_correlation),
+    replicate_over_cor=grit_df.median_replicate_correlation / grit_df.median_control_correlation,
+    replicate_over_oneminuscor=grit_df.median_replicate_correlation / (1 - grit_df.median_control_correlation),
 )
 grit_df.replicate_over_cor = grit_df.replicate_over_cor.abs()
 
@@ -99,9 +91,7 @@ replicate_gg = (
         gg.aes(x="median_replicate_correlation", y="median_control_correlation"),
     )
     + gg.geom_point(gg.aes(fill="grit", size="grit"), alpha=0.7)
-    + gg.geom_point(
-        gg.aes(size="grit"), fill="grey", data=grit_df.query("grit < 1"), alpha=0.7
-    )
+    + gg.geom_point(gg.aes(size="grit"), fill="grey", data=grit_df.query("grit < 1"), alpha=0.7)
     + gg.scale_fill_gradient(name="Grit", high="yellow", low="red")
     + gg.scale_size_continuous(guide=False, range=[0.1, 4], breaks=[0, 0.1, 2, 3, 5])
     + gg.facet_wrap("~cell_line", nrow=3)
@@ -203,9 +193,7 @@ replicate_gg
 replicate_gg = (
     gg.ggplot(grit_df, gg.aes(x="grit", y="replicate_over_oneminuscor"))
     + gg.geom_point(
-        gg.aes(
-            fill="median_replicate_correlation", size="median_replicate_correlation"
-        ),
+        gg.aes(fill="median_replicate_correlation", size="median_replicate_correlation"),
         alpha=0.7,
     )
     + gg.scale_fill_distiller(name="Median\nreplicate\ncorrelation\n", type="div")
@@ -233,9 +221,7 @@ grit_df.query("grit < 0").query("replicate_over_oneminuscor > 0.4")
 
 # Load Cell Health data
 plate = "SQ00014613"
-data_file = pathlib.Path(
-    "../../1.calculate-metrics/cell-health/data/cell_health_merged_feature_select.csv.gz"
-)
+data_file = pathlib.Path("../../1.calculate-metrics/cell-health/data/cell_health_merged_feature_select.csv.gz")
 
 df = pd.read_csv(data_file, sep=",")
 

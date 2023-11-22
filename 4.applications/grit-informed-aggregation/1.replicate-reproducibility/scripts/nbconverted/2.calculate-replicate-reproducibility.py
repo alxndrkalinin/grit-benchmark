@@ -74,9 +74,7 @@ pd.DataFrame(
 box = (
     gg.ggplot(
         guide_rep_cors.query("~Metadata_agg_method.str.contains('ctrls')"),
-        gg.aes(
-            fill="Metadata_agg_method", x="Metadata_agg_method", y="similarity_metric"
-        ),
+        gg.aes(fill="Metadata_agg_method", x="Metadata_agg_method", y="similarity_metric"),
     )
     + gg.geom_boxplot()
     + gg.facet_wrap("Metadata_cell_line")
@@ -92,9 +90,7 @@ display(box)
 jitter = (
     gg.ggplot(
         guide_rep_cors.query("~Metadata_agg_method.str.contains('ctrls')"),
-        gg.aes(
-            fill="Metadata_agg_method", x="Metadata_agg_method", y="similarity_metric"
-        ),
+        gg.aes(fill="Metadata_agg_method", x="Metadata_agg_method", y="similarity_metric"),
     )
     + gg.geom_jitter()
     + gg.facet_wrap("Metadata_cell_line")
@@ -114,9 +110,7 @@ display(jitter)
 box = (
     gg.ggplot(
         gene_rep_cors.query("~Metadata_agg_method.str.contains('ctrls')"),
-        gg.aes(
-            fill="Metadata_agg_method", x="Metadata_agg_method", y="similarity_metric"
-        ),
+        gg.aes(fill="Metadata_agg_method", x="Metadata_agg_method", y="similarity_metric"),
     )
     + gg.geom_boxplot()
     + gg.facet_wrap("Metadata_cell_line")
@@ -132,9 +126,7 @@ display(box)
 jitter = (
     gg.ggplot(
         gene_rep_cors.query("~Metadata_agg_method.str.contains('ctrls')"),
-        gg.aes(
-            fill="Metadata_agg_method", x="Metadata_agg_method", y="similarity_metric"
-        ),
+        gg.aes(fill="Metadata_agg_method", x="Metadata_agg_method", y="similarity_metric"),
     )
     + gg.geom_jitter()
     + gg.facet_wrap("Metadata_cell_line")
@@ -153,12 +145,8 @@ display(jitter)
 # In[7]:
 
 
-guide_rep_cors.to_csv(
-    Path(results_folder + "guide_replicate_correlations.tsv"), index=False, sep="\t"
-)
-gene_rep_cors.to_csv(
-    Path(results_folder + "gene_replicate_correlations.tsv"), index=False, sep="\t"
-)
+guide_rep_cors.to_csv(Path(results_folder + "guide_replicate_correlations.tsv"), index=False, sep="\t")
+gene_rep_cors.to_csv(Path(results_folder + "gene_replicate_correlations.tsv"), index=False, sep="\t")
 
 
 # ## Calculate percent replicating and percent matching
@@ -224,9 +212,7 @@ display(corr_matching_df)
 # In[13]:
 
 
-guide_sub = corr_replicating_df.drop(
-    columns=["Null_corr", "Replicate_corr"], axis="columns", inplace=False
-)
+guide_sub = corr_replicating_df.drop(columns=["Null_corr", "Replicate_corr"], axis="columns", inplace=False)
 gene_sub = corr_matching_df.drop(
     columns=[
         "Matching_corr",
@@ -236,9 +222,7 @@ gene_sub = corr_matching_df.drop(
     inplace=False,
 )
 merged_df = pd.merge(guide_sub, gene_sub, how="inner", on="Experiment")
-merged_df[["Cell Line", "Aggregation Method"]] = merged_df.Experiment.str.split(
-    " ", expand=True
-).loc[:, 0:1]
+merged_df[["Cell Line", "Aggregation Method"]] = merged_df.Experiment.str.split(" ", expand=True).loc[:, 0:1]
 merged_df[
     [
         "Cell Line",
@@ -256,9 +240,5 @@ merged_df[
 # In[14]:
 
 
-corr_replicating_df.to_csv(
-    Path(results_folder + "percent_replicating.tsv"), index=False, sep="\t"
-)
-corr_matching_df.to_csv(
-    Path(results_folder + "percent_matching.tsv"), index=False, sep="\t"
-)
+corr_replicating_df.to_csv(Path(results_folder + "percent_replicating.tsv"), index=False, sep="\t")
+corr_matching_df.to_csv(Path(results_folder + "percent_matching.tsv"), index=False, sep="\t")

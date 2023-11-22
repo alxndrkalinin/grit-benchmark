@@ -38,9 +38,7 @@ files = {prefix: {plate: []} for prefix in results_prefixes for plate in plates}
 for plate in plates:
     for prefix in results_prefixes:
         file_prefix = results_prefixes[prefix]
-        files[prefix][plate] = pathlib.Path(
-            f"{results_dir}/{file_prefix}{plate}_chr2.tsv.gz"
-        )
+        files[prefix][plate] = pathlib.Path(f"{results_dir}/{file_prefix}{plate}_chr2.tsv.gz")
 
 files
 
@@ -54,7 +52,6 @@ for plate in plates:
     phate_df = pd.read_csv(files["phate"][plate], sep="\t")
 
     for gene in umap_df.grit_gene.unique():
-
         umap_gene_df = umap_df.query("grit_gene == @gene").merge(
             grit_df.query("grit_gene == @gene"),
             left_on=["Metadata_cell_identity"],
@@ -68,24 +65,16 @@ for plate in plates:
         )
 
         control_perts = (
-            umap_gene_df.query("Metadata_gene_name in @control_group_genes_cut")
-            .Metadata_pert_name.unique()
-            .tolist()
+            umap_gene_df.query("Metadata_gene_name in @control_group_genes_cut").Metadata_pert_name.unique().tolist()
         )
 
         test_perts = (
-            umap_gene_df.query("Metadata_pert_name not in @control_perts")
-            .Metadata_pert_name.unique()
-            .tolist()
+            umap_gene_df.query("Metadata_pert_name not in @control_perts").Metadata_pert_name.unique().tolist()
         )
 
         pert_order = test_perts + control_perts
-        umap_gene_df.Metadata_pert_name = pd.Categorical(
-            umap_gene_df.Metadata_pert_name, categories=pert_order
-        )
-        phate_gene_df.Metadata_pert_name = pd.Categorical(
-            phate_gene_df.Metadata_pert_name, categories=pert_order
-        )
+        umap_gene_df.Metadata_pert_name = pd.Categorical(umap_gene_df.Metadata_pert_name, categories=pert_order)
+        phate_gene_df.Metadata_pert_name = pd.Categorical(phate_gene_df.Metadata_pert_name, categories=pert_order)
 
         gene_umap_gg = (
             gg.ggplot(umap_gene_df, gg.aes(x="umap_0", y="umap_1"))

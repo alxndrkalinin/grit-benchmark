@@ -23,9 +23,7 @@ output_dir = pathlib.Path("figures")
 cell_health_dir = pathlib.Path("../../1.calculate-metrics/cell-health/results")
 cell_health_grit_file = pathlib.Path(f"{cell_health_dir}/cell_health_grit.tsv")
 
-cell_health_grit_df = pd.read_csv(cell_health_grit_file, sep="\t").query(
-    "grit_replicate_summary_method == 'mean'"
-)
+cell_health_grit_df = pd.read_csv(cell_health_grit_file, sep="\t").query("grit_replicate_summary_method == 'mean'")
 
 print(cell_health_grit_df.shape)
 cell_health_grit_df.head()
@@ -40,9 +38,7 @@ cor_metric_df = cell_health_grit_df.pivot(
     values="grit",
 ).reset_index()
 
-cor_metric_df = cor_metric_df.assign(
-    differential=cor_metric_df.pearson - cor_metric_df.spearman
-)
+cor_metric_df = cor_metric_df.assign(differential=cor_metric_df.pearson - cor_metric_df.spearman)
 
 print(cor_metric_df.shape)
 cor_metric_df.head()
@@ -66,9 +62,7 @@ grit_cor_comparison_gg = (
     + gg.theme(strip_background=gg.element_rect(color="black", fill="#fdfff4"))
 )
 
-output_file = pathlib.Path(
-    f"{output_dir}/cell_health_grit_correlation_metric_comparison.png"
-)
+output_file = pathlib.Path(f"{output_dir}/cell_health_grit_correlation_metric_comparison.png")
 grit_cor_comparison_gg.save(output_file, dpi=500, height=3.2, width=5.4)
 
 grit_cor_comparison_gg

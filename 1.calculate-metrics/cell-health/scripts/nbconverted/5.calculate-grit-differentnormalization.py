@@ -30,9 +30,7 @@ output_dir = "results"
 
 # Load different normalized data
 data_dir = pathlib.Path("../../0.download-data/data/cell-health/profiles")
-plate_file = pathlib.Path(
-    f"{data_dir}/cell_health_profiles_merged_wholeplate_normalized_featureselected.tsv.gz"
-)
+plate_file = pathlib.Path(f"{data_dir}/cell_health_profiles_merged_wholeplate_normalized_featureselected.tsv.gz")
 
 profile_df = pd.read_csv(plate_file, sep="\t")
 
@@ -66,9 +64,7 @@ control_barcodes_cut = (
 
 control_barcodes_pert = (
     profile_df.loc[
-        profile_df[replicate_group_grit["replicate_group_col"]].isin(
-            control_group_pert
-        ),
+        profile_df[replicate_group_grit["replicate_group_col"]].isin(control_group_pert),
         replicate_group_grit["profile_col"],
     ]
     .unique()

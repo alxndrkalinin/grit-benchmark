@@ -106,9 +106,7 @@ metric_summary_gg = (
     + grit_theme
 )
 
-output_file = pathlib.Path(
-    f"{output_dir}/cell_health_grit_metric_summary_comparison.png"
-)
+output_file = pathlib.Path(f"{output_dir}/cell_health_grit_metric_summary_comparison.png")
 metric_summary_gg.save(output_file, dpi=500, height=3, width=6.5)
 
 metric_summary_gg
