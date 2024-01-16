@@ -8,17 +8,23 @@ See https://github.com/broadinstitute/cell-health/blob/master/0.download-data/do
 
 import pathlib
 import requests
+from concurrent.futures import ThreadPoolExecutor
 
 
-def download_sqllite_file(filename, url):
-    with requests.get(url, stream=True) as sql_request:
-        sql_request.raise_for_status()
-        with open(filename, "wb") as sql_fh:
-            for chunk in sql_request.iter_content(chunk_size=819200000):
-                if chunk:
-                    assert isinstance(chunk, object)
-                    sql_fh.write(chunk)
+def download_sqllite_file(plate, file_info, download_dir):
+    figshare_id = file_info[plate]
+    filename = pathlib.Path(download_dir, f"{plate}.sqlite")
+    url = f"https://nih.figshare.com/ndownloader/files/{figshare_id}"
 
+    if not filename.exists():
+        print(f"Now downloading... {filename}")
+        with requests.get(url, stream=True) as sql_request:
+            sql_request.raise_for_status()
+            with open(filename, 'wb') as sql_fh:
+                for chunk in sql_request.iter_content(chunk_size=819200000):
+                    if chunk:
+                        sql_fh.write(chunk)
+        print(f"Done... {filename}\n")
 
 file_info = {
     "SQ00014610": "18028784",
@@ -35,12 +41,6 @@ file_info = {
 download_dir = pathlib.Path("data/cell_health")
 download_dir.mkdir(exist_ok=True, parents=True)
 
-for plate in file_info:
-    figshare_id = file_info[plate]
-    filename = pathlib.Path(download_dir, f"{plate}.sqlite")
-    if filename.exists():
-        continue
-    print(f"Now downloading... {filename}")
-    url = f"https://nih.figshare.com/ndownloader/files/{figshare_id}"
-    download_sqllite_file(filename, url)
-    print("Done...\n\n")
+with ThreadPoolExecutor(max_workers=10) as executor:
+    futures = [executor.submit(download_sqllite_file, plate, file_info, download_dir) for plate in file_info]
+
