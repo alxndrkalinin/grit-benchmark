@@ -2,6 +2,11 @@ import numpy as np
 import pandas as pd
 
 
+def l2_normalize(vectors):
+    norms = np.linalg.norm(vectors, axis=1, keepdims=True)
+    return vectors / norms
+
+
 def generate_plate_map(n_wells, n_perts, n_controls, rng, resample_perts=False, negcon_pert_value="negative_control"):
     wells = [f"w{j}" for j in range(n_wells)]
     perturbations = [f"c{k}" for k in range(n_perts)] + [negcon_pert_value] * n_controls
@@ -10,7 +15,7 @@ def generate_plate_map(n_wells, n_perts, n_controls, rng, resample_perts=False, 
 
 
 def generate_distribution_params_differ(n_perts_total, n_perts_differ, control_params, differ_params, rng):
-    """Generate random distribution parameters for each perturbation, with some perturbations having different parameters."""
+    """Assign distribution parameters for each perturbation, with some perturbations having different parameters."""
     params = {}
     differ_perts = rng.choice(range(n_perts_total), size=n_perts_differ, replace=False)
     for i in range(n_perts_total):
@@ -93,7 +98,7 @@ def generate_features(
     resample_perts=False,
 ):
     # Ensure the proportions sum up to 1
-    assert sum(feature_proportions.values()) == 1.0, "Feature proportions must sum up to 1"
+    # assert sum(feature_proportions.values()) == 1.0, "Feature proportions must sum up to 1"
 
     # Calculate the number of features for each distribution type
     num_gaussian = int(n_feats * feature_proportions["gaussian"])
@@ -114,13 +119,13 @@ def generate_features(
     for plate_idx in range(n_plates):
         plate_map_id = f"pm{unique_plate_maps.index(plate_maps[plate_idx])}"
         for well, pert in plate_maps[plate_idx].items():
-            dframe = dframe.append(
+            dframe = pd.concat([dframe, pd.DataFrame([
                 {
                     "Metadata_Plate": f"p{plate_idx}",
                     "Metadata_Well": well,
                     "Metadata_Perturbation": pert,
                     "Metadata_Plate_Map": plate_map_id,
-                },
+                }])],
                 ignore_index=True,
             )
 
@@ -137,6 +142,7 @@ def generate_features(
                     pert_params[pert],
                     rng,
                     features_differ=features_differ,
+                    # differ_params=differ_params(),
                     differ_params=differ_params,
                 )
 

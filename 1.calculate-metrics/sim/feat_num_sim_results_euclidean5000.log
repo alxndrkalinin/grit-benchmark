@@ -1,0 +1,33 @@
+[5000]
+[<function differ_params at 0x7f447902b040>]
+[{'gaussian': 1, 'lognormal': 0, 'poisson': 0, 'nbinom': 0}, {'gaussian': 2, 'lognormal': 0, 'poisson': 0, 'nbinom': 0}, {'gaussian': 4, 'lognormal': 0, 'poisson': 0, 'nbinom': 0}, {'gaussian': 8, 'lognormal': 0, 'poisson': 0, 'nbinom': 0}, {'gaussian': 16, 'lognormal': 0, 'poisson': 0, 'nbinom': 0}, {'gaussian': 32, 'lognormal': 0, 'poisson': 0, 'nbinom': 0}, {'gaussian': 64, 'lognormal': 0, 'poisson': 0, 'nbinom': 0}]
+
+Processing n_feats: 5000
+
+Processing n_plates: 2
+
+Processing n_controls: 4
+
+Processing differ_params: <function differ_params at 0x7f447902b040>
+
+Processing features_differ: {'gaussian': 50, 'lognormal': 0, 'poisson': 0, 'nbinom': 0} of 5000 (0.01)
+
+Calculating distances.
+Pos pairs size: 100, Neg pairs size: 1600
+  0%|          | 0/1 [00:00<?, ?it/s]                                       0%|          | 0/1 [00:00<?, ?it/s]100%|██████████| 1/1 [00:00<00:00,  4.04it/s]                                             /dgx1nas1/storage/data/akalinin/projects/copairs/src/copairs/compute.py:105: RuntimeWarning: invalid value encountered in divide
+  ap_scores = np.add.reduceat(pr_k * rel_k_list, cutoffs) / num_pos
+
+Calculating metric: replicate_reproducibility
+
+Calculating metric: mean_ap
+  0%|          | 0/2 [00:00<?, ?it/s]                                     
+Calculating distances.
+Pos pairs size: 100, Neg pairs size: 1600
+
+Calculating metric: mp_value
+Calculating mp-values:   0%|          | 0/100 [00:00<?, ?it/s]Calculating mp-values: 100%|██████████| 100/100 [00:00<00:00, 13255.91it/s]
+Processing groups:   0%|          | 0/100 [00:00<?, ?it/s]Processing groups:   1%|          | 1/100 [00:36<59:49, 36.26s/it]Processing groups:  11%|█         | 11/100 [00:36<03:36,  2.44s/it]Processing groups:  23%|██▎       | 23/100 [00:37<01:15,  1.02it/s]Processing groups:  28%|██▊       | 28/100 [00:38<00:53,  1.35it/s]Processing groups:  30%|███       | 30/100 [00:38<00:47,  1.47it/s]Processing groups:  32%|███▏      | 32/100 [00:39<00:43,  1.57it/s]Processing groups:  33%|███▎      | 33/100 [01:05<03:36,  3.23s/it]Processing groups:  35%|███▌      | 35/100 [01:09<03:10,  2.93s/it]Processing groups:  40%|████      | 40/100 [01:12<01:54,  1.90s/it]Processing groups:  47%|████▋     | 47/100 [01:13<00:57,  1.09s/it]Processing groups:  49%|████▉     | 49/100 [01:14<00:49,  1.03it/s]Processing groups:  58%|█████▊    | 58/100 [01:15<00:23,  1.81it/s]Processing groups:  61%|██████    | 61/100 [01:17<00:20,  1.94it/s]Processing groups:  65%|██████▌   | 65/100 [01:37<01:01,  1.77s/it]Processing groups:  66%|██████▌   | 66/100 [01:38<00:56,  1.66s/it]Processing groups:  67%|██████▋   | 67/100 [01:39<00:55,  1.68s/it]Processing groups:  68%|██████▊   | 68/100 [01:40<00:49,  1.55s/it]Processing groups:  69%|██████▉   | 69/100 [01:43<00:54,  1.77s/it]Processing groups:  71%|███████   | 71/100 [01:45<00:43,  1.50s/it]Processing groups:  76%|███████▌  | 76/100 [01:45<00:17,  1.37it/s]Processing groups:  79%|███████▉  | 79/100 [01:46<00:12,  1.65it/s]Processing groups:  89%|████████▉ | 89/100 [01:47<00:02,  3.81it/s]Processing groups:  97%|█████████▋| 97/100 [01:48<00:00,  4.07it/s]Processing groups:  99%|█████████▉| 99/100 [01:49<00:00,  3.86it/s]Processing groups: 100%|██████████| 100/100 [01:49<00:00,  3.95it/s]Processing groups: 100%|██████████| 100/100 [01:49<00:00,  1.10s/it]
+Traceback (most recent call last):
+  File "/dgx1nas1/storage/data/akalinin/projects/grit-benchmark/1.calculate-metrics/sim/feat_num_sim.py", line 191, in <module>
+    "differ_params": differ_params["gaussian"][0],
+TypeError: 'function' object is not subscriptable
