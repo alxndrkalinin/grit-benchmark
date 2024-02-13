@@ -7,3 +7,4 @@ rsconnect
 __pycache__/
 data
 *.pkl
+.vscode/
