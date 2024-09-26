@@ -1,0 +1,31 @@
+Save file: feat_num_sim_results_cosine1k_consist_seed42.pkl
+n_permutations=1000
+[100, 200, 500, 1000, 2500, 5000]
+[{'gaussian': (1, 1), 'lognormal': (1, 1), 'poisson': 1, 'nbinom': (1, 0.25), 'cauchy': (1, 1)}]
+[{'gaussian': 1, 'lognormal': 0, 'poisson': 0, 'nbinom': 0}, {'gaussian': 2, 'lognormal': 0, 'poisson': 0, 'nbinom': 0}, {'gaussian': 4, 'lognormal': 0, 'poisson': 0, 'nbinom': 0}, {'gaussian': 8, 'lognormal': 0, 'poisson': 0, 'nbinom': 0}, {'gaussian': 16, 'lognormal': 0, 'poisson': 0, 'nbinom': 0}, {'gaussian': 32, 'lognormal': 0, 'poisson': 0, 'nbinom': 0}, {'gaussian': 64, 'lognormal': 0, 'poisson': 0, 'nbinom': 0}]
+
+Processing n_feats: 100
+
+Processing n_plates: 2
+
+Processing n_controls: 6
+
+Processing differ_params: {'gaussian': (1, 1), 'lognormal': (1, 1), 'poisson': 1, 'nbinom': (1, 0.25), 'cauchy': (1, 1)}
+
+Processing features_differ: {'gaussian': 1, 'lognormal': 0, 'poisson': 0, 'nbinom': 0} of 100 (0.01), feats 100, plates 2, controls 6
+
+Calculating distances.
+Pos pairs size: 100, Neg pairs size: 2400
+  0%|          | 0/1 [00:00<?, ?it/s]                                       0%|          | 0/1 [00:00<?, ?it/s]                                     /dgx1nas1/storage/data/akalinin/miniconda3/envs/map_benchmark/lib/python3.10/site-packages/copairs/compute.py:117: RuntimeWarning: invalid value encountered in divide
+  ap_scores = np.add.reduceat(pr_k * rel_k_list, cutoffs) / num_pos
+
+Calculating metric: replicate_reproducibility
+
+Calculating metric: mean_ap
+  0%|          | 0/2 [00:00<?, ?it/s]                                     
+Calculating distances.
+Pos pairs size: 100, Neg pairs size: 2400
+
+Calculating metric: mp_value
+Calculating mp-values:   0%|          | 0/100 [00:00<?, ?it/s]Calculating mp-values: 100%|██████████| 100/100 [00:00<00:00, 40552.10it/s]
+Processing groups:   0%|          | 0/100 [00:00<?, ?it/s]Processing groups:   1%|          | 1/100 [00:32<53:25, 32.37s/it]Processing groups:   2%|▏         | 2/100 [00:34<24:14, 14.84s/it]Processing groups:   5%|▌         | 5/100 [00:35<06:50,  4.32s/it]Processing groups:   8%|▊         | 8/100 [00:36<03:40,  2.39s/it]Processing groups:  13%|█▎        | 13/100 [00:37<01:43,  1.19s/it]Processing groups:  19%|█▉        | 19/100 [00:39<00:59,  1.36it/s]Processing groups:  27%|██▋       | 27/100 [00:43<00:45,  1.61it/s]Processing groups:  33%|███▎      | 33/100 [01:07<01:58,  1.77s/it]Processing groups:  34%|███▍      | 34/100 [01:10<02:03,  1.86s/it]Processing groups:  35%|███▌      | 35/100 [01:12<02:04,  1.91s/it]Processing groups:  36%|███▌      | 36/100 [01:13<01:49,  1.72s/it]Processing groups:  38%|███▊      | 38/100 [01:14<01:30,  1.46s/it]Processing groups:  39%|███▉      | 39/100 [01:17<01:45,  1.73s/it]Processing groups:  56%|█████▌    | 56/100 [01:17<00:16,  2.70it/s]Processing groups:  60%|██████    | 60/100 [01:21<00:20,  1.98it/s]Processing groups:  63%|██████▎   | 63/100 [01:22<00:15,  2.38it/s]Processing groups:  63%|██████▎   | 63/100 [01:37<00:15,  2.38it/s]

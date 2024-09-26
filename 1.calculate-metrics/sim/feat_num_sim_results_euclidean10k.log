@@ -1,4 +1,4 @@
-Save file: feat_num_sim_results_euclidean.pkl
+Save file: feat_num_sim_results_euclidean10k.pkl
 n_permutations=10000
 [100, 200, 500, 1000, 2500, 5000]
 [{'gaussian': (1, 1), 'lognormal': (1, 1), 'poisson': 1, 'nbinom': (1, 0.25)}]
@@ -16,12 +16,16 @@ Processing features_differ: {'gaussian': 1, 'lognormal': 0, 'poisson': 0, 'nbino
 
 Calculating distances.
 Pos pairs size: 100, Neg pairs size: 2400
+  0%|          | 0/1 [00:00<?, ?it/s]                                       0%|          | 0/1 [00:00<?, ?it/s]                                     /dgx1nas1/storage/data/akalinin/miniconda3/envs/map_benchmark/lib/python3.10/site-packages/copairs/compute.py:117: RuntimeWarning: invalid value encountered in divide
+  ap_scores = np.add.reduceat(pr_k * rel_k_list, cutoffs) / num_pos
 
 Calculating metric: replicate_reproducibility
 
 Calculating metric: mean_ap
-
+  0%|          | 0/2 [00:00<?, ?it/s]                                     
 Calculating distances.
 Pos pairs size: 100, Neg pairs size: 2400
 
 Calculating metric: mp_value
+Calculating mp-values:   0%|          | 0/100 [00:00<?, ?it/s]Calculating mp-values: 100%|██████████| 100/100 [00:00<00:00, 58157.29it/s]
+Processing groups:   0%|          | 0/100 [00:00<?, ?it/s]

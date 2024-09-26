@@ -1,12 +1,23 @@
 import pickle
+from pathlib import Path
 
+from tqdm import tqdm
+import numpy as np
 import pandas as pd
+import seaborn as sns
+from scipy.stats import poisson, nbinom, lognorm
 
-from cytominer_eval import evaluate_metrics
+from cytominer_eval import evaluate_metrics, evaluate_metric
+from cytominer_eval.transform import metric_melt, copairs_similarity
+from cytominer_eval.utils.transform_utils import check_replicate_groups
+from cytominer_eval.utils.operation_utils import assign_replicates, set_pair_ids
+
 
 from scripts.generate_utils import (
+    generate_distribution_params,
     generate_distribution_params_differ,
     generate_features,
+    aggregate_metrics_results,
     calculate_accuracy,
     l2_normalize
 )
@@ -20,13 +31,10 @@ negcon_pert_value = "negative_control"
 
 SEED = 42
 
-SAVE_FILE = "feat_num_sim_results_cosine1k_consist_seed42.pkl"
-print(f"Save file: {SAVE_FILE}")
-
-# n_plates = 2
+n_plates = 2
 # n_wells = 108  -> # set to n_per_plate + n_controls
 n_perts = 100  # constant
-# n_controls = 8
+n_controls = 8
 # n_feats = 100  # constant -> set in the config below
 n_plate_maps = 1  # constant
 n_perts_differ = 0  # constant
@@ -55,8 +63,6 @@ replicate_groups = {
 }
 
 n_permutations = 1000
-print(f"{n_permutations=}")
-
 metrics_config = {
     "replicate_reproducibility": {
         "return_median_correlations": True,
@@ -76,6 +82,8 @@ metrics_config = {
     },
 }
 
+distances = ["cosine", "euclidean"]
+
 normalize_rows = False
 
 # plate_nums = [2, 3, 4]
@@ -85,17 +93,15 @@ normalize_rows = False
 # control_nums = [8]
 
 plates_controls = {
-    # 2: [18],
-    # 3: [8],
-    # 4: [6],
-    2: [6, 12, 18],
-    3: [4, 8, 12],
-    4: [3, 6, 9],
+    2: [18],
+    # 2: [6, 12, 18],
+    # 3: [4, 8, 12],
+    # 4: [3, 6, 9],
 }
 
-n_feats_config = [100, 200, 500, 1000, 2500, 5000]
+# n_feats_config = [100, 200, 500, 1000, 2500, 5000]
 # n_feats_config = [500, 1000, 2500]
-# n_feats_config = [1000]
+n_feats_config = [1000]
 print(n_feats_config)
 
 feature_proportions = {"gaussian": 1.0, "lognormal": 0.0, "poisson": 0.0, "nbinom": 0.0}
@@ -111,16 +117,12 @@ def differ_params():
         "lognormal": (1, 1),
         "poisson": 1,
         "nbinom": (1, 0.25),
-        "cauchy": (1, 1),
     }
 differ_params_configs = [differ_params()]
 print(differ_params_configs)
 
-features_differ_configs = [{"gaussian": 2**i, "lognormal": 0, "poisson": 0, "nbinom": 0} for i in range(0,7)]
-# features_differ_configs = [{"gaussian": 0, "lognormal": 0, "poisson": 0, "nbinom": 0, "cauchy": 2**i} for i in range(0,7)]
-# features_differ_configs = [{"gaussian": 1, "lognormal": 0, "poisson": 0, "nbinom": 0}] + [{"gaussian": i, "lognormal": 0, "poisson": 0, "nbinom": 0} for i in range(10, 101, 10)]
-
-# features_differ_configs = [{"gaussian": 2**i, "lognormal": 0, "poisson": 0, "nbinom": 0} for i in [4,5]]
+features_differ_configs = [{"gaussian": 2**i, "lognormal": 0, "poisson": 0, "nbinom": 0} for i in range(4,6)]
+# features_differ_configs = [{"gaussian": 2**i, "lognormal": 0, "poisson": 0, "nbinom": 0} for i in range(4, 5)]
 print(features_differ_configs)
 
 
@@ -145,10 +147,7 @@ for n_feats in n_feats_config:
 
                 for features_differ in features_differ_configs:
                     features_differ = {dist: int(num * (n_feats/100)) for dist, num in features_differ.items()}
-                    print(
-                        f"\nProcessing features_differ: {features_differ} of {n_feats} ({features_differ['gaussian'] / n_feats}),",
-                        f"feats {n_feats}, plates {n_plates}, controls {n_controls}"
-                        )
+                    print(f"\nProcessing features_differ: {features_differ} of {n_feats} ({features_differ['gaussian'] / n_feats})")
 
                     dframe, feats = generate_features(
                         n_plates,
@@ -175,50 +174,47 @@ for n_feats in n_feats_config:
                         meta_features=dframe.columns,
                         replicate_groups=replicate_groups,
                         metrics_config=metrics_config,
-                        # distance_metric="euclidean",
+                        distance_metric="euclidean",
+                        use_copairs=True,
+                    )
+
+                    cosine_map, _ = evaluate_metric(
+                        profiles=pd.concat([dframe, feats], axis=1),
+                        features=feats.columns,
+                        meta_features=dframe.columns,
+                        replicate_groups=replicate_groups,
+                        operation="mean_ap",
+                        operation_kwargs=metrics_config["mean_ap"],
                         distance_metric="cosine",
                         use_copairs=True,
                     )
 
-                    # cosine_map, _ = evaluate_metric(
-                    #     profiles=pd.concat([dframe, feats], axis=1),
-                    #     features=feats.columns,
-                    #     meta_features=dframe.columns,
-                    #     replicate_groups=replicate_groups,
-                    #     operation="mean_ap",
-                    #     operation_kwargs=metrics_config["mean_ap"],
-                    #     distance_metric="cosine",
-                    #     use_copairs=True,
-                    # )
+                    print((metrics_results['mean_ap'].drop_duplicates()["p_value"] < 0.05).sum())
+                    print((cosine_map.drop_duplicates()["p_value"] < 0.05).sum())
+                    print((metrics_results['mp_value'].drop_duplicates()["mp_value"] < 0.05).sum())
 
-                    print('mAP: ', (metrics_results['mean_ap']["p_value"] < 0.05).sum())
-                    # print((cosine_map.drop_duplicates()["p_value"] < 0.05).sum())
-                    print('mp-value: ', (metrics_results['mp_value'].drop_duplicates()["mp_value"] < 0.05).sum())
+#                     acc = calculate_accuracy(metrics_results)
+#                     acc.update(
+#                         {
+#                             "n_feats": n_feats,
+#                             "n_plates": n_plates,
+#                             "n_controls": n_controls,
+#                             "features_differ": features_differ["gaussian"],
+#                             "differ_params": differ_params["gaussian"][0],
+#                         }
+#                     )
 
-                    acc = calculate_accuracy(metrics_results)
-                    acc.update(
-                        {
-                            "n_feats": n_feats,
-                            "n_plates": n_plates,
-                            "n_controls": n_controls,
-                            "features_differ": features_differ["gaussian"],
-                            "differ_params": differ_params["gaussian"][0],
-                        }
-                    )
+#                     cosine_map = cosine_map.drop_duplicates().reset_index(drop=True)
+#                     acc.update({
+#                         "cosine_mean_ap": (cosine_map["mean_ap"] == 1.0).sum() / cosine_map.shape[0],
+#                         "cosine_mean_ap_p_value": (cosine_map["p_value"] < 0.05).sum() / cosine_map.shape[0],
+#                     })
 
-                    # cosine_map = cosine_map.drop_duplicates().reset_index(drop=True)
-                    # acc.update({
-                    #     "cosine_mean_ap": (cosine_map["mean_ap"] == 1.0).sum() / cosine_map.shape[0],
-                    #     "cosine_mean_ap_p_value": (cosine_map["p_value"] < 0.05).sum() / cosine_map.shape[0],
-                    # })
+#                     print(acc)
+#                     feature_num_accuracy_results.append(acc)
+#                     with open("feat_num_sim_results_euclidean.pkl", "wb") as f:
+#                         pickle.dump(feature_num_accuracy_results, f)
 
-                    print(acc)
-                    feature_num_accuracy_results.append(acc)
-                    with open(SAVE_FILE, "wb") as f:
-                        pickle.dump(feature_num_accuracy_results, f)
-
-print(f"Saving results to {SAVE_FILE}")
-with open(SAVE_FILE, "wb") as f:
-    pickle.dump(feature_num_accuracy_results, f)
-
-print("Done.")
+# print(feature_num_accuracy_results)
+# with open("feat_num_sim_results_euclidean.pkl", "wb") as f:
+#     pickle.dump(feature_num_accuracy_results, f)
